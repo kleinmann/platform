@@ -10,6 +10,7 @@ use Shopware\Core\Checkout\Shipping\Aggregate\ShippingMethodPrice\ShippingMethod
 use Shopware\Core\Checkout\Shipping\ShippingMethodDefinition;
 use Shopware\Core\Content\Product\Aggregate\ProductPrice\ProductPriceDefinition;
 use Shopware\Core\Content\Rule\Aggregate\RuleCondition\RuleConditionDefinition;
+use Shopware\Core\Content\Workflow\Aggregate\WorkflowRule\WorkflowRuleDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\AttributesField;
@@ -72,6 +73,7 @@ class RuleDefinition extends EntityDefinition
             (new OneToManyAssociationField('personaPromotions', PromotionDefinition::class, 'persona_rule_id', 'id'))->addFlags(new CascadeDelete()),
             (new OneToManyAssociationField('scopePromotions', PromotionDefinition::class, 'scope_rule_id', 'id'))->addFlags(new CascadeDelete()),
             (new OneToManyAssociationField('discountPromotions', PromotionDefinition::class, 'discount_rule_id', 'id'))->addFlags(new CascadeDelete()),
+            (new OneToManyAssociationField('workflowRules', WorkflowRuleDefinition::class, 'rule_id', 'id'))->addFlags(new CascadeDelete()),
         ]);
     }
 }
