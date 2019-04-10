@@ -9,6 +9,7 @@ use Shopware\Core\Checkout\Shipping\Aggregate\ShippingMethodPrice\ShippingMethod
 use Shopware\Core\Checkout\Shipping\ShippingMethodCollection;
 use Shopware\Core\Content\Product\Aggregate\ProductPrice\ProductPriceCollection;
 use Shopware\Core\Content\Rule\Aggregate\RuleCondition\RuleConditionCollection;
+use Shopware\Core\Content\Workflow\Aggregate\WorkflowRule\WorkflowRuleCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\Entity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityIdTrait;
 use Shopware\Core\Framework\Rule\Rule;
@@ -111,6 +112,11 @@ class RuleEntity extends Entity
      * @var ShippingMethodPriceCollection|null
      */
     protected $shippingMethodPriceCalculations;
+
+    /**
+     * @var WorkflowRuleCollection|null
+     */
+    protected $workflowRules;
 
     public function getName(): string
     {
@@ -300,5 +306,17 @@ class RuleEntity extends Entity
     public function setShippingMethodPriceCalculations(ShippingMethodPriceCollection $shippingMethodPriceCalculations): void
     {
         $this->shippingMethodPriceCalculations = $shippingMethodPriceCalculations;
+    }
+
+    public function getWorkflowRules(): ?WorkflowRuleCollection
+    {
+        return $this->workflowRules;
+    }
+
+    public function setWorkflowRules(WorkflowRuleCollection $workflowRules)
+    {
+        $this->workflowRules = $workflowRules;
+
+        return $this;
     }
 }
