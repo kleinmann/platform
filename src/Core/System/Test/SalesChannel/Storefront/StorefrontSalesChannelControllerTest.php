@@ -5,20 +5,20 @@ namespace Shopware\Core\System\Test\SalesChannel\Storefront;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\FetchMode;
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Checkout\Cart\CartRuleLoader;
 use Shopware\Core\Checkout\Test\Payment\Handler\SyncTestPaymentHandler;
 use Shopware\Core\Content\DeliveryTime\DeliveryTimeEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\Test\TestCaseBase\AssertArraySubsetBehaviour;
+use Shopware\Core\Framework\Test\TestCaseBase\RuleMutationBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\StorefrontFunctionalTestBehaviour;
-use Shopware\Core\Framework\Test\TestCaseHelper\ReflectionHelper;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Storefront\Test\Page\StorefrontPageTestConstants;
 
 class StorefrontSalesChannelControllerTest extends TestCase
 {
     use StorefrontFunctionalTestBehaviour,
+        RuleMutationBehaviour,
         AssertArraySubsetBehaviour;
 
     /**
@@ -43,11 +43,6 @@ class StorefrontSalesChannelControllerTest extends TestCase
         $this->connection = $this->getContainer()->get(Connection::class);
         $this->salesChannelRepository = $this->getContainer()->get('sales_channel.repository');
         $this->context = Context::createDefaultContext();
-
-        // reset rules
-        $ruleLoader = $this->getContainer()->get(CartRuleLoader::class);
-        $rulesProperty = ReflectionHelper::getProperty(CartRuleLoader::class, 'rules');
-        $rulesProperty->setValue($ruleLoader, null);
     }
 
     public function testGetSalesChannelCurrencies(): void

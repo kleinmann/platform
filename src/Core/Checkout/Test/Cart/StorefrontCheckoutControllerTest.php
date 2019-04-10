@@ -13,6 +13,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Test\TestCaseBase\AssertArraySubsetBehaviour;
+use Shopware\Core\Framework\Test\TestCaseBase\RuleMutationBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\StorefrontFunctionalTestBehaviour;
 use Shopware\Core\Framework\Test\TestCaseHelper\ReflectionHelper;
 use Shopware\Core\Framework\Util\Random;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 class StorefrontCheckoutControllerTest extends TestCase
 {
     use StorefrontFunctionalTestBehaviour,
+        RuleMutationBehaviour,
         AssertArraySubsetBehaviour;
 
     /**
@@ -90,11 +92,6 @@ class StorefrontCheckoutControllerTest extends TestCase
         $this->taxId = Uuid::randomHex();
         $this->manufacturerId = Uuid::randomHex();
         $this->context = Context::createDefaultContext();
-
-        // reset rules
-        $ruleLoader = $this->getContainer()->get(CartRuleLoader::class);
-        $rulesProperty = ReflectionHelper::getProperty(CartRuleLoader::class, 'rules');
-        $rulesProperty->setValue($ruleLoader, null);
     }
 
     public function testOrderProcess(): void
@@ -765,10 +762,6 @@ class StorefrontCheckoutControllerTest extends TestCase
         $quantity = 5;
         $this->addProduct($client, $productId, $quantity);
         static::assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
-
-        $ruleLoader = $this->getContainer()->get(CartRuleLoader::class);
-        $rulesProperty = ReflectionHelper::getProperty(CartRuleLoader::class, 'rules');
-        $rulesProperty->setValue($ruleLoader, null);
 
         $this->guestOrder($client, $personal);
         static::assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
