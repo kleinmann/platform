@@ -2,6 +2,7 @@
 
 namespace Shopware\Core\Framework\Workflow;
 
+use Psr\Log\LoggerInterface;
 use Shopware\Core\Checkout\CheckoutRuleScope;
 use Shopware\Core\Content\Workflow\Aggregate\WorkflowRule\WorkflowRuleEntity;
 use Shopware\Core\Content\Workflow\WorkflowCollection;
@@ -29,11 +30,17 @@ class WorkflowService
      */
     private $actionProvider;
 
-    public function __construct(EntityRepositoryInterface $workflowRepository, Evaluator $evaluator, ActionProvider $actionProvider)
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(EntityRepositoryInterface $workflowRepository, Evaluator $evaluator, ActionProvider $actionProvider, LoggerInterface $logger)
     {
         $this->workflowRepository = $workflowRepository;
         $this->evaluator = $evaluator;
         $this->actionProvider = $actionProvider;
+        $this->logger = $logger;
     }
 
     public function executeForTrigger(string $trigger, SalesChannelContext $context, Collection $data): void
@@ -61,7 +68,12 @@ class WorkflowService
 
             foreach ($workflow->getWorkflowActions() as $workflowAction) {
                 $action = $this->actionProvider->getActionForHandlerIdentifier($workflowAction->getHandlerIdentifier());
-                $action->execute($workflowAction->getConfiguration(), $data);
+
+                try {
+                    $action->execute($workflowAction->getConfiguration(), $data);
+                } catch (\Throwable $e) {
+                    $this->logger->error(sprintf('Error on workflow action execution for workflow action %s', $workflowAction->getId()), ['exception' => $e]);
+                }
             }
         }
     }

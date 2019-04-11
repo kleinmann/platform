@@ -5,8 +5,11 @@ namespace Shopware\Core\Framework\Workflow\Action;
 use GuzzleHttp\Client;
 use Shopware\Core\Framework\Struct\Collection;
 use Shopware\Core\Framework\Twig\StringTemplateRenderer;
+use Shopware\Core\Framework\Validation\Exception\ConstraintViolationException;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class WebhookAction implements ActionInterface
@@ -34,10 +37,12 @@ class WebhookAction implements ActionInterface
 
     public function execute(array $configuration, Collection $data): void
     {
-        $this->validate($configuration);
+        if (($violations = $this->validate($configuration))->count() > 0) {
+            throw new ConstraintViolationException($violations, $configuration);
+        }
 
         $options = !empty($configuration['options'])
-            ? json_decode($this->stringTemplateRenderer->render($configuration['options'], $data->toArray()['elements']), true)
+            ? json_decode($this->stringTemplateRenderer->render($configuration['options'], $data->getElements()), true)
             : [];
 
         $client = new Client();
@@ -48,21 +53,21 @@ class WebhookAction implements ActionInterface
         );
     }
 
-    private function validate(array $configuration): void
+    private function validate(array $configuration): ConstraintViolationListInterface
     {
-        $this->validator->validate(
-            $configuration['method'],
-            [
-                new NotBlank(),
-            ]
-        );
-
-        $this->validator->validate(
-            $configuration['url'],
-            [
-                new NotBlank(),
-                new Url(),
-            ]
+        return $this->validator->validate(
+            $configuration,
+            new Assert\Collection(
+                [
+                    'method' => [
+                        new NotBlank(),
+                    ],
+                    'url' => [
+                        new NotBlank(),
+                        new Url(),
+                    ],
+                ]
+            )
         );
     }
 }
