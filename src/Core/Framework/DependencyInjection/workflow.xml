@@ -5,7 +5,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="Shopware\Core\Content\Workflow\ActionProvider">
+        <service id="Shopware\Core\Framework\Workflow\ActionProvider">
             <argument type="tagged" tag="workflow.action"/>
         </service>
 
@@ -18,7 +18,13 @@
         <service id="Shopware\Core\Framework\Workflow\WorkflowService">
             <argument type="service" id="workflow.repository"/>
             <argument type="service" id="Shopware\Core\Framework\Rule\Evaluator"/>
-            <argument type="service" id="Shopware\Core\Content\Workflow\ActionProvider"/>
+            <argument type="service" id="Shopware\Core\Framework\Workflow\ActionProvider"/>
+        </service>
+
+        <service id="Shopware\Core\Framework\Workflow\Subscriber\WorkflowTriggerSubscriber">
+            <argument type="service" id="Shopware\Core\Framework\Workflow\WorkflowService"/>
+            <argument type="service" id="customer.repository"/>
+            <tag name="kernel.event_subscriber"/>
         </service>
     </services>
 </container>

@@ -9,6 +9,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Rule\Evaluator;
+use Shopware\Core\Framework\Struct\Collection;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
 class WorkflowService
@@ -35,7 +36,7 @@ class WorkflowService
         $this->actionProvider = $actionProvider;
     }
 
-    public function executeForTrigger(string $trigger, SalesChannelContext $context): void
+    public function executeForTrigger(string $trigger, SalesChannelContext $context, Collection $data): void
     {
         /** @var WorkflowCollection $workflows */
         $workflows = $this->workflowRepository->search(
@@ -54,13 +55,13 @@ class WorkflowService
                 $workflow->getWorkflowRules()->getElements()
             );
 
-            if (empty(array_intersect($workflowRules, $matchingRules->getElements()))) {
+            if (!empty($workflowRules) && empty(array_intersect($workflowRules, $matchingRules->getElements()))) {
                 continue;
             }
 
-            foreach ($workflow->getWorkflowActions() as $workflowWorkflowAction) {
-                $action = $this->actionProvider->getActionForHandlerIdentifier($workflowWorkflowAction->getWorkflowAction()->getHandlerIdentifier());
-                $action->execute($context, $workflowWorkflowAction->getConfiguration());
+            foreach ($workflow->getWorkflowActions() as $workflowAction) {
+                $action = $this->actionProvider->getActionForHandlerIdentifier($workflowAction->getHandlerIdentifier());
+                $action->execute($workflowAction->getConfiguration(), $data);
             }
         }
     }

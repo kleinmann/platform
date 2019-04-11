@@ -4,6 +4,7 @@ namespace Shopware\Core\Framework\Event;
 
 use Shopware\Core\Checkout\Customer\Event\CustomerLoginEvent;
 use Shopware\Core\Checkout\Customer\Event\CustomerLogoutEvent;
+use Shopware\Core\Checkout\Customer\Event\CustomerRegistrationEvent;
 use Shopware\Core\System\User\Recovery\UserRecoveryRequestEvent;
 
 final class BusinessEvents
@@ -22,6 +23,11 @@ final class BusinessEvents
      * @Event("Shopware\Core\Checkout\Customer\Event\CustomerLogoutEvent")
      */
     public const CHECKOUT_CUSTOMER_LOGOUT = CustomerLogoutEvent::EVENT_NAME;
+
+    /**
+     * @Event("Shopware\Core\Checkout\Customer\Event\CustomerRegistrationEvent")
+     */
+    public const CHECKOUT_CUSTOMER_REGISTRATION = CustomerRegistrationEvent::EVENT_NAME;
 
     /**
      * @Event("Shopware\Core\System\User\Recovery\UserRecoveryRequestEvent")

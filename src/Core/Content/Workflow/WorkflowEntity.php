@@ -44,7 +44,7 @@ class WorkflowEntity extends Entity
     /**
      * @var WorkflowActionCollection|null
      */
-    protected $WorkflowActions;
+    protected $workflowActions;
 
     public function getName(): string
     {
@@ -108,11 +108,11 @@ class WorkflowEntity extends Entity
 
     public function getWorkflowActions(): ?WorkflowActionCollection
     {
-        return $this->WorkflowActions;
+        return $this->workflowActions;
     }
 
-    public function setWorkflowActions(?WorkflowActionCollection $WorkflowActions): void
+    public function setWorkflowActions(?WorkflowActionCollection $workflowActions): void
     {
-        $this->WorkflowActions = $WorkflowActions;
+        $this->workflowActions = $workflowActions;
     }
 }

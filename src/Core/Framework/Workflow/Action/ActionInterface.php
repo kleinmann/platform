@@ -2,11 +2,11 @@
 
 namespace Shopware\Core\Framework\Workflow\Action;
 
-use Shopware\Core\System\SalesChannel\SalesChannelContext;
+use Shopware\Core\Framework\Struct\Collection;
 
 interface ActionInterface
 {
     public function getHandlerIdentifier(): string;
 
-    public function execute(SalesChannelContext $context, array $configuration): void;
+    public function execute(array $configuration, Collection $data): void;
 }

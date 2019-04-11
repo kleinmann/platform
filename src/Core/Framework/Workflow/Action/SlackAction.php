@@ -1,18 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Shopware\Core\Framework\Workflow\Action;
 
 use GuzzleHttp\Client;
-use Shopware\Core\Framework\DataAbstractionLayer\Write\Validation\Validator;
+use Shopware\Core\Framework\Struct\Collection;
 use Shopware\Core\Framework\Twig\StringTemplateRenderer;
-use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotBlankValidator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SlackAction implements ActionInterface
 {
-
     /**
      * @var StringTemplateRenderer
      */
@@ -26,20 +23,19 @@ class SlackAction implements ActionInterface
     public function __construct(StringTemplateRenderer $stringTemplateRenderer, ValidatorInterface $validator)
     {
         $this->stringTemplateRenderer = $stringTemplateRenderer;
-        $this->validator              = $validator;
+        $this->validator = $validator;
     }
-
 
     public function getHandlerIdentifier(): string
     {
         return 'sw-slack';
     }
 
-    public function execute(SalesChannelContext $context, array $configuration): void
+    public function execute(array $configuration, Collection $data): void
     {
         $this->validate($configuration);
 
-        $text = $this->stringTemplateRenderer->render($configuration['text'], $context->toArray());
+        $text = $this->stringTemplateRenderer->render($configuration['text'], $data->toArray()['elements']);
 
         $client = new Client();
         $client->post(
@@ -47,7 +43,7 @@ class SlackAction implements ActionInterface
             [
                 'json' => [
                     'text' => $text,
-                ]
+                ],
             ]
         );
     }
@@ -57,16 +53,15 @@ class SlackAction implements ActionInterface
         $this->validator->validate(
             $configuration['slackWebHook'],
             [
-                new NotBlank()
+                new NotBlank(),
             ]
         );
 
         $this->validator->validate(
             $configuration['text'],
             [
-                new NotBlank()
+                new NotBlank(),
             ]
         );
     }
-
 }

@@ -36,19 +36,9 @@ class WorkflowActionEntity extends Entity
     protected $workflowId;
 
     /**
-     * @var string
-     */
-    protected $workflowActionId;
-
-    /**
      * @var WorkflowEntity
      */
     protected $workflow;
-
-    /**
-     * @var WorkflowActionEntity
-     */
-    protected $workflowAction;
 
     public function getCreatedAt(): \DateTimeInterface
     {
@@ -100,16 +90,6 @@ class WorkflowActionEntity extends Entity
         $this->workflowId = $workflowId;
     }
 
-    public function getWorkflowActionId(): string
-    {
-        return $this->workflowActionId;
-    }
-
-    public function setWorkflowActionId(string $workflowActionId): void
-    {
-        $this->workflowActionId = $workflowActionId;
-    }
-
     public function getWorkflow(): WorkflowEntity
     {
         return $this->workflow;
@@ -118,15 +98,5 @@ class WorkflowActionEntity extends Entity
     public function setWorkflow(WorkflowEntity $workflow): void
     {
         $this->workflow = $workflow;
-    }
-
-    public function getWorkflowAction(): WorkflowActionEntity
-    {
-        return $this->workflowAction;
-    }
-
-    public function setWorkflowAction(WorkflowActionEntity $workflowAction): void
-    {
-        $this->workflowAction = $workflowAction;
     }
 }
