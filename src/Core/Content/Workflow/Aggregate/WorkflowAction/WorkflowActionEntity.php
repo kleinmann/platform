@@ -36,6 +36,11 @@ class WorkflowActionEntity extends Entity
     protected $attributes;
 
     /**
+     * @var array|null
+     */
+    protected $fields;
+
+    /**
      * @var WorkflowWorkflowActionCollection|null
      */
     protected $workflowWorkflowActions;
@@ -88,6 +93,16 @@ class WorkflowActionEntity extends Entity
     public function setHandlerIdentifier(string $handlerIdentifier): void
     {
         $this->handlerIdentifier = $handlerIdentifier;
+    }
+
+    public function getFields(): ?array
+    {
+        return $this->fields;
+    }
+
+    public function setFields(?array $fields): void
+    {
+        $this->fields = $fields;
     }
 
     public function getWorkflowWorkflowActions(): ?WorkflowWorkflowActionCollection

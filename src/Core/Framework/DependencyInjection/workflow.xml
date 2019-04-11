@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="Shopware\Core\Content\Workflow\ActionProvider">
+            <argument type="tagged" tag="workflow.action"/>
+        </service>
+
+        <service id="Shopware\Core\Framework\Workflow\WorkflowService">
+            <argument type="service" id="workflow.repository"/>
+            <argument type="service" id="Shopware\Core\Framework\Rule\Evaluator"/>
+            <argument type="service" id="Shopware\Core\Content\Workflow\ActionProvider"/>
+        </service>
+    </services>
+</container>
