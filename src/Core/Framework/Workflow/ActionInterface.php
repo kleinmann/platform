@@ -6,7 +6,7 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
 interface ActionInterface
 {
-    public function setConfiguration(array $configuration);
+    public function supports(string $handlerIdentifier): bool;
 
-    public function execute(SalesChannelContext $context);
+    public function execute(SalesChannelContext $context, array $configuration): void;
 }
