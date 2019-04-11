@@ -23,7 +23,6 @@
 
         <service id="Shopware\Core\Framework\Workflow\WorkflowService">
             <argument type="service" id="workflow.repository"/>
-            <argument type="service" id="Shopware\Core\Framework\Rule\Evaluator"/>
             <argument type="service" id="Shopware\Core\Framework\Workflow\ActionProvider"/>
             <argument type="service" id="logger"/>
         </service>

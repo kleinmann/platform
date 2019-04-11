@@ -3,14 +3,12 @@
 namespace Shopware\Core\Framework\Workflow;
 
 use Psr\Log\LoggerInterface;
-use Shopware\Core\Checkout\CheckoutRuleScope;
 use Shopware\Core\Content\Workflow\Aggregate\WorkflowRule\WorkflowRuleEntity;
 use Shopware\Core\Content\Workflow\WorkflowCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
-use Shopware\Core\Framework\Rule\Evaluator;
 use Shopware\Core\Framework\Struct\Collection;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
@@ -22,11 +20,6 @@ class WorkflowService
     private $workflowRepository;
 
     /**
-     * @var Evaluator
-     */
-    private $evaluator;
-
-    /**
      * @var ActionProvider
      */
     private $actionProvider;
@@ -36,10 +29,9 @@ class WorkflowService
      */
     private $logger;
 
-    public function __construct(EntityRepositoryInterface $workflowRepository, Evaluator $evaluator, ActionProvider $actionProvider, LoggerInterface $logger)
+    public function __construct(EntityRepositoryInterface $workflowRepository, ActionProvider $actionProvider, LoggerInterface $logger)
     {
         $this->workflowRepository = $workflowRepository;
-        $this->evaluator = $evaluator;
         $this->actionProvider = $actionProvider;
         $this->logger = $logger;
     }
@@ -55,17 +47,15 @@ class WorkflowService
             $context->getContext()
         )->getEntities();
 
-        $matchingRules = $this->evaluator->getMatchingRules(new CheckoutRuleScope($context), $context->getContext());
-
         foreach ($workflows->getIterator() as $workflow) {
-            $workflowRules = array_map(
+            $workflowRuleIds = array_map(
                 function (WorkflowRuleEntity $workflowRule) {
-                    return $workflowRule->getRule();
+                    return $workflowRule->getRule()->getId();
                 },
                 $workflow->getWorkflowRules()->getElements()
             );
 
-            if (!empty($workflowRules) && empty(array_intersect($workflowRules, $matchingRules->getElements()))) {
+            if (!empty($workflowRuleIds) && empty(array_intersect($workflowRuleIds, $context->getRuleIds()))) {
                 continue;
             }
 
