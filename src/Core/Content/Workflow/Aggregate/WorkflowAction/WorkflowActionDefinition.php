@@ -8,6 +8,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\AttributesField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\CreatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\CascadeDelete;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Deferred;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Internal;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\WriteProtected;
@@ -40,7 +41,7 @@ class WorkflowActionDefinition extends EntityDefinition
         return new FieldCollection([
             (new IdField('id', 'id'))->addFlags(new PrimaryKey(), new Required()),
             (new StringField('name', 'name'))->addFlags(new Required()),
-            (new StringField('handler_identifier', 'handlerIdentifier'))->addFlags(new Required(), new WriteProtected()),
+            (new StringField('handler_identifier', 'handlerIdentifier'))->addFlags(new Required(), new WriteProtected(), new Internal()),
             new AttributesField(),
             new CreatedAtField(),
             new UpdatedAtField(),
