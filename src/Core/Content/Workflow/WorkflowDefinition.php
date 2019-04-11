@@ -11,6 +11,8 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\CascadeDelete;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\IdField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\IntField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\LongTextField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\OneToManyAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\StringField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\UpdatedAtField;
@@ -39,6 +41,8 @@ class WorkflowDefinition extends EntityDefinition
             (new IdField('id', 'id'))->addFlags(new PrimaryKey(), new Required()),
             (new StringField('trigger', 'trigger'))->addFlags(new Required()),
             (new StringField('name', 'name'))->addFlags(new Required()),
+            new LongTextField('description', 'description'),
+            (new IntField('priority', 'priority'))->addFlags(new Required()),
             new AttributesField(),
             new CreatedAtField(),
             new UpdatedAtField(),

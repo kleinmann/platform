@@ -17,17 +17,21 @@ class Migration1554905417CreateWorkflow extends MigrationStep
         $connection->exec(
             'CREATE TABLE `workflow`
             (
-                `id`         BINARY(16)   NOT NULL
+                `id`          BINARY(16)   NOT NULL
                     PRIMARY KEY,
-                `name`       VARCHAR(255) NOT NULL,
-                `trigger`    VARCHAR(255) NOT NULL,
-                `attributes` JSON         NULL,
-                `created_at` DATETIME     NOT NULL,
-                `updated_at` DATETIME     NULL
+                `name`        VARCHAR(255) NOT NULL,
+                `trigger`     VARCHAR(255) NOT NULL,
+                `description` LONGTEXT     NULL,
+                `priority`    INT(11)      NOT NULL,
+                `attributes`  JSON         NULL,
+                `created_at`  DATETIME     NOT NULL,
+                `updated_at`  DATETIME     NULL
             );
 
             CREATE INDEX `idx.trigger`
-                ON `workflow` (`trigger`);'
+                ON `workflow` (`trigger`);
+            CREATE INDEX `idx.priority`
+                ON `workflow` (`priority`);'
         );
 
         $connection->exec(
@@ -39,6 +43,7 @@ class Migration1554905417CreateWorkflow extends MigrationStep
                 `handler_identifier` VARCHAR(255) NOT NULL,
                 `attributes`         JSON         NULL,
                 `configuration`      JSON         NOT NULL,
+                `priority`           INT(11)      NOT NULL,
                 `created_at`         DATETIME     NOT NULL,
                 `updated_at`         DATETIME     NULL,
                 CONSTRAINT `fk.workflow_action.workflow_id`
@@ -47,7 +52,9 @@ class Migration1554905417CreateWorkflow extends MigrationStep
             );
 
             CREATE INDEX `idx.handler_identifier`
-                ON `workflow_action` (`handler_identifier`);'
+                ON `workflow_action` (`handler_identifier`);
+            CREATE INDEX `idx.priority`
+                ON `workflow_action` (`priority`);'
         );
 
         $connection->exec(

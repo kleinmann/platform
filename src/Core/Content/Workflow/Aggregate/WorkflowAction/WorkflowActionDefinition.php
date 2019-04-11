@@ -9,6 +9,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\FkField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\IdField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\IntField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\JsonField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\ManyToOneAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\StringField;
@@ -38,6 +39,7 @@ class WorkflowActionDefinition extends EntityDefinition
             (new IdField('id', 'id'))->addFlags(new PrimaryKey(), new Required()),
             (new FkField('workflow_id', 'workflowId', WorkflowDefinition::class))->addFlags(new Required()),
             (new StringField('handler_identifier', 'handlerIdentifier'))->addFlags(new Required()),
+            (new IntField('priority', 'priority'))->addFlags(new Required()),
             new CreatedAtField(),
             new UpdatedAtField(),
             (new JsonField('configuration', 'configuration'))->addFlags(new Required()),

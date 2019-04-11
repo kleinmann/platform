@@ -26,6 +26,11 @@ class WorkflowActionEntity extends Entity
     protected $configuration;
 
     /**
+     * @var int
+     */
+    protected $priority;
+
+    /**
      * @var string
      */
     protected $handlerIdentifier;
@@ -68,6 +73,16 @@ class WorkflowActionEntity extends Entity
     public function setConfiguration(array $configuration): void
     {
         $this->configuration = $configuration;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): void
+    {
+        $this->priority = $priority;
     }
 
     public function getHandlerIdentifier(): string

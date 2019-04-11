@@ -15,6 +15,13 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
  */
 class WorkflowActionCollection extends EntityCollection
 {
+    public function sortByPriority(): void
+    {
+        $this->sort(function (WorkflowActionEntity $a, WorkflowActionEntity $b) {
+            return $b->getPriority() <=> $a->getPriority();
+        });
+    }
+
     protected function getExpectedClass(): string
     {
         return WorkflowActionEntity::class;

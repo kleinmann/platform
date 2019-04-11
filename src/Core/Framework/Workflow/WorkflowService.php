@@ -9,6 +9,7 @@ use Shopware\Core\Content\Workflow\WorkflowCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\Framework\Rule\Evaluator;
 use Shopware\Core\Framework\Struct\Collection;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
@@ -49,7 +50,9 @@ class WorkflowService
         $workflows = $this->workflowRepository->search(
             (new Criteria())->addFilter(new EqualsFilter('trigger', $trigger))
                 ->addAssociation('workflowRules')
-                ->addAssociation('workflowActions'), $context->getContext()
+                ->addAssociation('workflowActions')
+                ->addSorting(new FieldSorting('priority', FieldSorting::DESCENDING)),
+            $context->getContext()
         )->getEntities();
 
         $matchingRules = $this->evaluator->getMatchingRules(new CheckoutRuleScope($context), $context->getContext());
@@ -66,7 +69,10 @@ class WorkflowService
                 continue;
             }
 
-            foreach ($workflow->getWorkflowActions() as $workflowAction) {
+            $workflowActions = $workflow->getWorkflowActions();
+            $workflowActions->sortByPriority();
+
+            foreach ($workflowActions as $workflowAction) {
                 $action = $this->actionProvider->getActionForHandlerIdentifier($workflowAction->getHandlerIdentifier());
 
                 try {

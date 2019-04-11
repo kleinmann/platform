@@ -22,6 +22,16 @@ class WorkflowEntity extends Entity
     protected $trigger;
 
     /**
+     * @var string
+     */
+    protected $description;
+
+    /**
+     * @var int
+     */
+    protected $priority;
+
+    /**
      * @var \DateTimeInterface
      */
     protected $createdAt;
@@ -64,6 +74,26 @@ class WorkflowEntity extends Entity
     public function setTrigger(string $trigger): void
     {
         $this->trigger = $trigger;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): void
+    {
+        $this->priority = $priority;
     }
 
     public function getCreatedAt(): \DateTimeInterface
