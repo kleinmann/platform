@@ -1,0 +1,84 @@
+{% block sw_settings_workflow_detail %}
+    <sw-page class="sw-settings-workflow-detail">
+        {% block sw_settings_workflow_detail_header %}
+            <template slot="smart-bar-header">
+                <h2 v-if="workflow.name">{{ workflow.name }}</h2>
+                <h2 v-else>{{ $tc('sw-settings-workflow.detail.textHeadline') }}</h2>
+            </template>
+        {% endblock %}
+
+        {% block sw_settings_workflow_detail_actions %}
+            <template slot="smart-bar-actions">
+
+                {% block sw_settings_workflow_detail_actions_cancel %}
+                    <sw-button :disabled="workflow.isLoading" :routerLink="{ name: 'sw.settings.workflow.index' }">
+                        {{ $tc('sw-settings-workflow.detail.buttonCancel') }}
+                    </sw-button>
+                {% endblock %}
+
+                {% block sw_settings_workflow_detail_actions_save %}
+                    <sw-button class="sw-settings-workflow-detail__save-action" variant="primary" :disabled="workflow.isLoading" @click="onSave">
+                        {{ $tc('sw-settings-workflow.detail.buttonSave') }}
+                    </sw-button>
+                {% endblock %}
+
+            </template>
+        {% endblock %}
+
+        {% block sw_settings_workflow_detail_content %}
+            <sw-card-view slot="content">
+                {% block sw_settings_workflow_detail_content_card %}
+                    <sw-card :large="true" :title="$tc('sw-settings-workflow.detail.titleCard')">
+                        <sw-container grid="1fr 1fr" gap="0px 30px">
+                            <sw-container columns="2fr 1fr" gap="0px 32px">
+                                {% block sw_settings_workflow_detail_content_card_field_label %}
+                                    <sw-field type="text"
+                                              :label="$tc('sw-settings-workflow.detail.labelName')"
+                                              :placeholder="$tc('sw-settings-workflow.detail.placeholderName')"
+                                              validation="required"
+                                              v-model="workflow.name">
+                                    </sw-field>
+                                {% endblock %}
+
+                                {% block sw_settings_workflow_detail_content_card_field_priority %}
+                                    <sw-field type="number"
+                                              :label="$tc('sw-settings-workflow.detail.labelPriority')"
+                                              :placeholder="$tc('sw-settings-workflow.detail.placeholderPriority')"
+                                              validation="required"
+                                              v-model="workflow.priority">
+                                    </sw-field>
+                                {% endblock %}
+                            </sw-container>
+                                {% block sw_settings_workflow_detail_content_card_field_description %}
+                                    <sw-field type="textarea"
+                                              :label="$tc('sw-settings-workflow.detail.labelDescription')"
+                                              :placeholder="$tc('sw-settings-workflow.detail.placeholderDescription')"
+                                              v-model="workflow.description">
+                                    </sw-field>
+                                {% endblock %}
+                                {% block sw_settings_workflow_detail_content_card_field_type %}
+                                    <sw-condition-value v-if="moduleTypes"
+                                                        multi
+                                                        id="workflowType"
+                                                        :label="$tc('sw-settings-workflow.detail.labelType')"
+                                                        :store="moduleTypeStore"
+                                                        v-model="moduleTypes">
+                                    </sw-condition-value>
+                                {% endblock %}
+                        </sw-container>
+                    </sw-card>
+                {% endblock %}
+
+                {% block sw_settings_workflow_detail_conditions_card %}
+                    <sw-card class="sw-settings-workflow-detail__condition_container" :large="true" :title="$tc('sw-settings-workflow.detail.workflowCard')">
+                        <sw-condition-tree :entity="workflow"
+                                           :conditionStore="treeConfig.conditionStore"
+                                           :config="treeConfig"
+                                           ref="conditionTree">
+                        </sw-condition-tree>
+                    </sw-card>
+                {% endblock %}
+            </sw-card-view>
+        {% endblock %}
+    </sw-page>
+{% endblock %}

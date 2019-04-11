@@ -1,0 +1,55 @@
+{
+  "sw-settings-workflow": {
+    "general": {
+      "mainMenuItemGeneral": "Workflow",
+      "placeholderSearchBar": "Search all workflow",
+      "descriptionTextModule": "Manage workflow here."
+    },
+    "list": {
+      "textHeadline": "Workflow",
+      "buttonAddWorkflow": "Create workflow",
+      "columnName": "Name",
+      "columnDescription": "Description",
+      "columnDateCreated": "Creation date",
+      "columnPriority": "Priority",
+      "columnStatus": "Status",
+      "contextMenuEdit": "Edit",
+      "contextMenuDelete": "Delete",
+      "contextMenuDuplicate": "Duplicate",
+      "buttonCancel": "Cancel",
+      "buttonDelete": "Delete",
+      "textDeleteConfirm": "Are you sure you want to delete the rule \"{name}\"?",
+      "modalTitleDelete": "Delete workflow",
+      "modalTitleBulkDelete": "Delete Workflows",
+      "textBulkDeleteConfirm": "Are you sure you want to delete the selected rules?",
+      "titleSidebarItemRefresh": "Refresh",
+      "titleSidebarBulkTrash": "Delete rules",
+      "valid": "Valid",
+      "invalid": "Invalid",
+      "messageEmpty": "No rules yet"
+    },
+    "detail": {
+      "textHeadline": "New workflow",
+      "buttonCancel": "Cancel",
+      "buttonSave": "Save",
+      "titleCard": "General",
+      "labelName": "Name",
+      "labelDescription": "Description",
+      "labelPriority": "Priority",
+      "labelType": "Type",
+      "placeholderName": "Set a name for this rule...",
+      "placeholderDescription": "Set a description for this rule...",
+      "placeholderPriority": "Set a priority for this rule...",
+      "titleSaveSuccess": "Success",
+      "messageSaveSuccess": "The rule \"{name}\" has been saved successfully.",
+      "workflowCard": "Condition",
+      "titleSaveError": "Error",
+      "messageSaveError": "An error occurred while saving rule \"{name}\".",
+      "types": {
+        "dispatch": "Dispatch",
+        "payment": "Payment",
+        "price": "Price"
+      }
+    }
+  }
+}
