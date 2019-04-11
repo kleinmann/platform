@@ -24,15 +24,15 @@ class WorkflowService
     private $evaluator;
 
     /**
-     * @var iterable|ActionInterface[]
+     * @var ActionProvider
      */
-    private $actions;
+    private $actionProvider;
 
-    public function __construct(EntityRepositoryInterface $workflowRepository, Evaluator $evaluator, iterable $actions)
+    public function __construct(EntityRepositoryInterface $workflowRepository, Evaluator $evaluator, ActionProvider $actionProvider)
     {
         $this->workflowRepository = $workflowRepository;
         $this->evaluator = $evaluator;
-        $this->actions = $actions;
+        $this->actionProvider = $actionProvider;
     }
 
     public function executeForTrigger(string $trigger, SalesChannelContext $context): void
@@ -59,13 +59,8 @@ class WorkflowService
             }
 
             foreach ($workflow->getWorkflowWorkflowActions() as $workflowWorkflowAction) {
-                foreach ($this->actions as $action) {
-                    if ($action->supports($workflowWorkflowAction->getWorkflowAction()->getHandlerIdentifier())) {
-                        continue;
-                    }
-
-                    $action->execute($context, $workflowWorkflowAction->getConfiguration());
-                }
+                $action = $this->actionProvider->getActionForHandlerIdentifier($workflowWorkflowAction->getWorkflowAction()->getHandlerIdentifier());
+                $action->execute($context, $workflowWorkflowAction->getConfiguration());
             }
         }
     }
