@@ -2,16 +2,15 @@
 
 namespace Shopware\Core\Content\Workflow\Aggregate\WorkflowAction;
 
-use Shopware\Core\Content\Workflow\Aggregate\WorkflowWorkflowAction\WorkflowWorkflowActionDefinition;
+use Shopware\Core\Content\Workflow\WorkflowDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
-use Shopware\Core\Framework\DataAbstractionLayer\Field\AttributesField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\CreatedAtField;
-use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\CascadeDelete;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\FkField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
-use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\WriteProtected;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\IdField;
-use Shopware\Core\Framework\DataAbstractionLayer\Field\OneToManyAssociationField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\JsonField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\ManyToOneAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\StringField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\UpdatedAtField;
 use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
@@ -37,13 +36,13 @@ class WorkflowActionDefinition extends EntityDefinition
     {
         return new FieldCollection([
             (new IdField('id', 'id'))->addFlags(new PrimaryKey(), new Required()),
-            (new StringField('name', 'name'))->addFlags(new Required()),
-            (new StringField('handler_identifier', 'handlerIdentifier'))->addFlags(new Required(), new WriteProtected()),
-            new AttributesField(),
+            (new FkField('workflow_id', 'workflowId', WorkflowDefinition::class))->addFlags(new Required()),
+            (new StringField('handler_identifier', 'handlerIdentifier'))->addFlags(new Required()),
             new CreatedAtField(),
             new UpdatedAtField(),
+            (new JsonField('configuration', 'configuration'))->addFlags(new Required()),
 
-            (new OneToManyAssociationField('workflowWorkflowActions', WorkflowWorkflowActionDefinition::class, 'workflow_action_id'))->addFlags(new CascadeDelete()),
+            new ManyToOneAssociationField('workflow', 'workflow_id', WorkflowDefinition::class),
         ]);
     }
 }

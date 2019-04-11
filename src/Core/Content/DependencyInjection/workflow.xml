@@ -13,8 +13,5 @@
         <service id="Shopware\Core\Content\Workflow\Aggregate\WorkflowRule\WorkflowRuleDefinition">
             <tag name="shopware.entity.definition" entity="workflow_rule"/>
         </service>
-        <service id="Shopware\Core\Content\Workflow\Aggregate\WorkflowWorkflowAction\WorkflowWorkflowActionDefinition">
-            <tag name="shopware.entity.definition" entity="workflow_workflow_action"/>
-        </service>
     </services>
 </container>

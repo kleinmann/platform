@@ -5,11 +5,11 @@ namespace Shopware\Core\Framework\Workflow;
 use Shopware\Core\Checkout\CheckoutRuleScope;
 use Shopware\Core\Content\Workflow\Aggregate\WorkflowRule\WorkflowRuleEntity;
 use Shopware\Core\Content\Workflow\WorkflowCollection;
-use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Rule\Evaluator;
+use Shopware\Core\Framework\Struct\Collection;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
 class WorkflowService
@@ -20,24 +20,34 @@ class WorkflowService
     private $workflowRepository;
 
     /**
-     * @var Context
-     */
-    private $context;
-
-    /**
      * @var Evaluator
      */
     private $evaluator;
 
-    public function executeForTrigger(string $trigger, SalesChannelContext $context)
+    /**
+     * @var ActionProvider
+     */
+    private $actionProvider;
+
+    public function __construct(EntityRepositoryInterface $workflowRepository, Evaluator $evaluator, ActionProvider $actionProvider)
+    {
+        $this->workflowRepository = $workflowRepository;
+        $this->evaluator = $evaluator;
+        $this->actionProvider = $actionProvider;
+    }
+
+    public function executeForTrigger(string $trigger, SalesChannelContext $context, Collection $data): void
     {
         /** @var WorkflowCollection $workflows */
-        $workflows = $this->workflowRepository->search((new Criteria())->addFilter(new EqualsFilter('trigger', $trigger))->addAssociation('workflowRules'), $this->context)->getEntities();
+        $workflows = $this->workflowRepository->search(
+            (new Criteria())->addFilter(new EqualsFilter('trigger', $trigger))
+                ->addAssociation('workflowRules')
+                ->addAssociation('workflowActions'), $context->getContext()
+        )->getEntities();
 
         $matchingRules = $this->evaluator->getMatchingRules(new CheckoutRuleScope($context), $context->getContext());
 
         foreach ($workflows->getIterator() as $workflow) {
-            // TODO: If workflow's rules match, execute actions
             $workflowRules = array_map(
                 function (WorkflowRuleEntity $workflowRule) {
                     return $workflowRule->getRule();
@@ -45,9 +55,13 @@ class WorkflowService
                 $workflow->getWorkflowRules()->getElements()
             );
 
-            if (count(array_diff($workflowRules, $matchingRules->getElements())) === 0) {
-                // TODO: Fetch matching action for handler_identifier of workflow's actions
-                // TODO: Execute actions
+            if (!empty($workflowRules) && empty(array_intersect($workflowRules, $matchingRules->getElements()))) {
+                continue;
+            }
+
+            foreach ($workflow->getWorkflowActions() as $workflowAction) {
+                $action = $this->actionProvider->getActionForHandlerIdentifier($workflowAction->getHandlerIdentifier());
+                $action->execute($workflowAction->getConfiguration(), $data);
             }
         }
     }

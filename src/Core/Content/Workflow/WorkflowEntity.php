@@ -2,8 +2,8 @@
 
 namespace Shopware\Core\Content\Workflow;
 
+use Shopware\Core\Content\Workflow\Aggregate\WorkflowAction\WorkflowActionCollection;
 use Shopware\Core\Content\Workflow\Aggregate\WorkflowRule\WorkflowRuleCollection;
-use Shopware\Core\Content\Workflow\Aggregate\WorkflowWorkflowAction\WorkflowWorkflowActionCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\Entity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityIdTrait;
 
@@ -42,9 +42,9 @@ class WorkflowEntity extends Entity
     protected $workflowRules;
 
     /**
-     * @var WorkflowWorkflowActionCollection|null
+     * @var WorkflowActionCollection|null
      */
-    protected $workflowWorkflowActions;
+    protected $workflowActions;
 
     public function getName(): string
     {
@@ -106,13 +106,13 @@ class WorkflowEntity extends Entity
         $this->workflowRules = $workflowRules;
     }
 
-    public function getWorkflowWorkflowActions(): ?WorkflowWorkflowActionCollection
+    public function getWorkflowActions(): ?WorkflowActionCollection
     {
-        return $this->workflowWorkflowActions;
+        return $this->workflowActions;
     }
 
-    public function setWorkflowWorkflowActions(?WorkflowWorkflowActionCollection $workflowWorkflowActions): void
+    public function setWorkflowActions(?WorkflowActionCollection $workflowActions): void
     {
-        $this->workflowWorkflowActions = $workflowWorkflowActions;
+        $this->workflowActions = $workflowActions;
     }
 }

@@ -56,6 +56,7 @@ class Framework extends Bundle
         $loader->load('tag.xml');
         $loader->load('store.xml');
         $loader->load('language.xml');
+        $loader->load('workflow.xml');
 
         $container->addCompilerPass(new FeatureFlagCompilerPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION);
         $container->addCompilerPass(new ExtensionCompilerPass());
