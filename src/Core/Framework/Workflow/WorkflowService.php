@@ -47,7 +47,6 @@ class WorkflowService
         $matchingRules = $this->evaluator->getMatchingRules(new CheckoutRuleScope($context), $context->getContext());
 
         foreach ($workflows->getIterator() as $workflow) {
-            // TODO: If workflow's rules match, execute actions
             $workflowRules = array_map(
                 function (WorkflowRuleEntity $workflowRule) {
                     return $workflowRule->getRule();
@@ -59,11 +58,9 @@ class WorkflowService
                 continue;
             }
 
-            // TODO: Fetch matching action for handler_identifier of workflow's actions
-            // TODO: Execute actions
             foreach ($workflow->getWorkflowWorkflowActions() as $workflowWorkflowAction) {
                 foreach ($this->actions as $action) {
-                    if (!$action->supports($workflowWorkflowAction->getWorkflowAction()->getHandlerIdentifier())) {
+                    if ($action->supports($workflowWorkflowAction->getWorkflowAction()->getHandlerIdentifier())) {
                         continue;
                     }
 
