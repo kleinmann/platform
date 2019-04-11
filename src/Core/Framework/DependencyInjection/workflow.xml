@@ -9,6 +9,12 @@
             <argument type="tagged" tag="workflow.action"/>
         </service>
 
+        <service id="Shopware\Core\Framework\Workflow\Action\SlackAction">
+            <argument type="service" id="Shopware\Core\Framework\Twig\StringTemplateRenderer"/>
+            <argument type="service" id="validator"/>
+            <tag name="workflow.action"/>
+        </service>
+
         <service id="Shopware\Core\Framework\Workflow\WorkflowService">
             <argument type="service" id="workflow.repository"/>
             <argument type="service" id="Shopware\Core\Framework\Rule\Evaluator"/>
