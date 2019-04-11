@@ -17,9 +17,11 @@ use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Checkout\Cart\LineItem\LineItemCollection;
 use Shopware\Core\Checkout\Cart\Order\OrderPersisterInterface;
 use Shopware\Core\Checkout\Cart\Processor;
+use Shopware\Core\Checkout\Order\Event\OrderEvent;
 use Shopware\Core\Checkout\Order\OrderDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CartService
 {
@@ -55,18 +57,25 @@ class CartService
      */
     private $cartRuleLoader;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
     public function __construct(
         Enrichment $enrichment,
         Processor $processor,
         CartPersisterInterface $persister,
         OrderPersisterInterface $orderPersister,
-        CartRuleLoader $cartRuleLoader
+        CartRuleLoader $cartRuleLoader,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->processor = $processor;
         $this->persister = $persister;
         $this->orderPersister = $orderPersister;
         $this->enrichment = $enrichment;
         $this->cartRuleLoader = $cartRuleLoader;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function setCart(Cart $cart): void
@@ -161,7 +170,12 @@ class CartService
         $event = $events->getEventByDefinition(OrderDefinition::class);
         $ids = $event->getIds();
 
-        return array_shift($ids);
+        $orderId = array_shift($ids);
+
+        $event = new OrderEvent($context, $orderId);
+        $this->eventDispatcher->dispatch(OrderEvent::EVENT_NAME, $event);
+
+        return $orderId;
     }
 
     public function recalculate(Cart $cart, SalesChannelContext $context): Cart
