@@ -58,7 +58,7 @@ class WorkflowService
                 continue;
             }
 
-            foreach ($workflow->getWorkflowWorkflowActions() as $workflowWorkflowAction) {
+            foreach ($workflow->getWorkflowActions() as $workflowWorkflowAction) {
                 $action = $this->actionProvider->getActionForHandlerIdentifier($workflowWorkflowAction->getWorkflowAction()->getHandlerIdentifier());
                 $action->execute($context, $workflowWorkflowAction->getConfiguration());
             }

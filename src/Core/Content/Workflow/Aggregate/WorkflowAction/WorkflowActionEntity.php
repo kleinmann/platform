@@ -2,23 +2,13 @@
 
 namespace Shopware\Core\Content\Workflow\Aggregate\WorkflowAction;
 
-use Shopware\Core\Content\Workflow\Aggregate\WorkflowWorkflowAction\WorkflowWorkflowActionCollection;
+use Shopware\Core\Content\Workflow\WorkflowEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\Entity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityIdTrait;
 
 class WorkflowActionEntity extends Entity
 {
     use EntityIdTrait;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $handlerIdentifier;
 
     /**
      * @var \DateTimeInterface
@@ -31,29 +21,34 @@ class WorkflowActionEntity extends Entity
     protected $updatedAt;
 
     /**
-     * @var array|null
+     * @var array
      */
-    protected $attributes;
+    protected $configuration;
 
     /**
-     * @var array|null
+     * @var string
      */
-    protected $fields;
+    protected $handlerIdentifier;
 
     /**
-     * @var WorkflowWorkflowActionCollection|null
+     * @var string
      */
-    protected $workflowWorkflowActions;
+    protected $workflowId;
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
+    /**
+     * @var string
+     */
+    protected $workflowActionId;
 
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
+    /**
+     * @var WorkflowEntity
+     */
+    protected $workflow;
+
+    /**
+     * @var WorkflowActionEntity
+     */
+    protected $workflowAction;
 
     public function getCreatedAt(): \DateTimeInterface
     {
@@ -70,19 +65,19 @@ class WorkflowActionEntity extends Entity
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): void
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }
 
-    public function getAttributes(): ?array
+    public function getConfiguration(): array
     {
-        return $this->attributes;
+        return $this->configuration;
     }
 
-    public function setAttributes(?array $attributes): void
+    public function setConfiguration(array $configuration): void
     {
-        $this->attributes = $attributes;
+        $this->configuration = $configuration;
     }
 
     public function getHandlerIdentifier(): string
@@ -95,23 +90,43 @@ class WorkflowActionEntity extends Entity
         $this->handlerIdentifier = $handlerIdentifier;
     }
 
-    public function getFields(): ?array
+    public function getWorkflowId(): string
     {
-        return $this->fields;
+        return $this->workflowId;
     }
 
-    public function setFields(?array $fields): void
+    public function setWorkflowId(string $workflowId): void
     {
-        $this->fields = $fields;
+        $this->workflowId = $workflowId;
     }
 
-    public function getWorkflowWorkflowActions(): ?WorkflowWorkflowActionCollection
+    public function getWorkflowActionId(): string
     {
-        return $this->workflowWorkflowActions;
+        return $this->workflowActionId;
     }
 
-    public function setWorkflowWorkflowActions(?WorkflowWorkflowActionCollection $workflowWorkflowActions): void
+    public function setWorkflowActionId(string $workflowActionId): void
     {
-        $this->workflowWorkflowActions = $workflowWorkflowActions;
+        $this->workflowActionId = $workflowActionId;
+    }
+
+    public function getWorkflow(): WorkflowEntity
+    {
+        return $this->workflow;
+    }
+
+    public function setWorkflow(WorkflowEntity $workflow): void
+    {
+        $this->workflow = $workflow;
+    }
+
+    public function getWorkflowAction(): WorkflowActionEntity
+    {
+        return $this->workflowAction;
+    }
+
+    public function setWorkflowAction(WorkflowActionEntity $workflowAction): void
+    {
+        $this->workflowAction = $workflowAction;
     }
 }

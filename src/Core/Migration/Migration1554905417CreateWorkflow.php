@@ -35,11 +35,15 @@ class Migration1554905417CreateWorkflow extends MigrationStep
             (
                 `id`                 BINARY(16)   NOT NULL
                     PRIMARY KEY,
-                `name`               VARCHAR(255) NOT NULL,
+                `workflow_id`        BINARY(16)   NOT NULL,
                 `handler_identifier` VARCHAR(255) NOT NULL,
                 `attributes`         JSON         NULL,
+                `configuration`      JSON         NOT NULL,
                 `created_at`         DATETIME     NOT NULL,
-                `updated_at`         DATETIME     NULL
+                `updated_at`         DATETIME     NULL,
+                CONSTRAINT `fk.workflow_action.workflow_id`
+                    FOREIGN KEY (`workflow_id`) REFERENCES `workflow` (`id`)
+                        ON DELETE CASCADE
             );
 
             CREATE INDEX `idx.handler_identifier`
@@ -59,25 +63,6 @@ class Migration1554905417CreateWorkflow extends MigrationStep
                     FOREIGN KEY (`rule_id`) REFERENCES `rule` (`id`)
                         ON DELETE CASCADE,
                 CONSTRAINT `fk.workflow_rule.workflow_id`
-                    FOREIGN KEY (`workflow_id`) REFERENCES `workflow` (`id`)
-                        ON DELETE CASCADE
-            );'
-        );
-
-        $connection->exec(
-            'CREATE TABLE `workflow_workflow_action`
-            (
-                `id`                 BINARY(16) NOT NULL
-                    PRIMARY KEY,
-                `workflow_id`        BINARY(16) NOT NULL,
-                `workflow_action_id` BINARY(16) NOT NULL,
-                `created_at`         DATETIME   NOT NULL,
-                `updated_at`         DATETIME   NULL,
-                `configuration`      JSON       NOT NULL,
-                CONSTRAINT `fk.workflow_workflow_action.workflow_action_id`
-                    FOREIGN KEY (`workflow_action_id`) REFERENCES `workflow_action` (`id`)
-                        ON DELETE CASCADE,
-                CONSTRAINT `fk.workflow_workflow_action.workflow_id`
                     FOREIGN KEY (`workflow_id`) REFERENCES `workflow` (`id`)
                         ON DELETE CASCADE
             );'

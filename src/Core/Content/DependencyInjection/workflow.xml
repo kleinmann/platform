@@ -13,12 +13,5 @@
         <service id="Shopware\Core\Content\Workflow\Aggregate\WorkflowRule\WorkflowRuleDefinition">
             <tag name="shopware.entity.definition" entity="workflow_rule"/>
         </service>
-        <service id="Shopware\Core\Content\Workflow\Aggregate\WorkflowWorkflowAction\WorkflowWorkflowActionDefinition">
-            <tag name="shopware.entity.definition" entity="workflow_workflow_action"/>
-        </service>
-        <service id="Shopware\Core\Content\Workflow\Aggregate\WorkflowAction\Subscriber\WorkflowActionLoadedSubscriber">
-            <argument type="service" id="Shopware\Core\Content\Workflow\ActionProvider"/>
-            <tag name="event_subscriber"/>
-        </service>
     </services>
 </container>

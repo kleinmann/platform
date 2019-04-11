@@ -2,8 +2,8 @@
 
 namespace Shopware\Core\Content\Workflow;
 
+use Shopware\Core\Content\Workflow\Aggregate\WorkflowAction\WorkflowActionDefinition;
 use Shopware\Core\Content\Workflow\Aggregate\WorkflowRule\WorkflowRuleDefinition;
-use Shopware\Core\Content\Workflow\Aggregate\WorkflowWorkflowAction\WorkflowWorkflowActionDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\AttributesField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\CreatedAtField;
@@ -44,7 +44,7 @@ class WorkflowDefinition extends EntityDefinition
             new UpdatedAtField(),
 
             (new OneToManyAssociationField('workflowRules', WorkflowRuleDefinition::class, 'workflow_id'))->addFlags(new CascadeDelete()),
-            (new OneToManyAssociationField('workflowWorkflowActions', WorkflowWorkflowActionDefinition::class, 'workflow_id'))->addFlags(new CascadeDelete()),
+            (new OneToManyAssociationField('workflowActions', WorkflowActionDefinition::class, 'workflow_id'))->addFlags(new CascadeDelete()),
         ]);
     }
 }
