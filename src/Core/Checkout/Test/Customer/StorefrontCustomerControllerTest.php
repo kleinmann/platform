@@ -3,7 +3,6 @@
 namespace Shopware\Core\Checkout\Test\Customer;
 
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Checkout\Cart\CartRuleLoader;
 use Shopware\Core\Checkout\Customer\Aggregate\CustomerAddress\CustomerAddressEntity;
 use Shopware\Core\Checkout\Customer\CustomerEntity;
 use Shopware\Core\Checkout\Test\Payment\Handler\SyncTestPaymentHandler;
@@ -11,15 +10,16 @@ use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\Test\TestCaseBase\RuleMutationBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\StorefrontFunctionalTestBehaviour;
-use Shopware\Core\Framework\Test\TestCaseHelper\ReflectionHelper;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Serializer;
 
 class StorefrontCustomerControllerTest extends TestCase
 {
-    use StorefrontFunctionalTestBehaviour;
+    use RuleMutationBehaviour,
+        StorefrontFunctionalTestBehaviour;
 
     /**
      * @var EntityRepositoryInterface
@@ -65,11 +65,6 @@ class StorefrontCustomerControllerTest extends TestCase
         $this->customerAddressRepository = $this->getContainer()->get('customer_address.repository');
         $this->countryStateRepository = $this->getContainer()->get('country_state.repository');
         $this->context = Context::createDefaultContext();
-
-        // reset rules
-        $ruleLoader = $this->getContainer()->get(CartRuleLoader::class);
-        $rulesProperty = ReflectionHelper::getProperty(CartRuleLoader::class, 'rules');
-        $rulesProperty->setValue($ruleLoader, null);
     }
 
     public function testLogin(): void

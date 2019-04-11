@@ -39,5 +39,9 @@
             <tag name="rule.definition"/>
         </service>
 
+        <service id="Shopware\Core\Framework\Rule\Evaluator">
+            <argument type="service" id="rule.repository"/>
+        </service>
+
     </services>
 </container>

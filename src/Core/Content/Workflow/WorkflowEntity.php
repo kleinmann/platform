@@ -17,6 +17,11 @@ class WorkflowEntity extends Entity
     protected $name;
 
     /**
+     * @var string
+     */
+    protected $trigger;
+
+    /**
      * @var \DateTimeInterface
      */
     protected $createdAt;
@@ -49,6 +54,16 @@ class WorkflowEntity extends Entity
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getTrigger(): string
+    {
+        return $this->trigger;
+    }
+
+    public function setTrigger(string $trigger): void
+    {
+        $this->trigger = $trigger;
     }
 
     public function getCreatedAt(): \DateTimeInterface

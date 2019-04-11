@@ -37,6 +37,7 @@ class WorkflowDefinition extends EntityDefinition
     {
         return new FieldCollection([
             (new IdField('id', 'id'))->addFlags(new PrimaryKey(), new Required()),
+            (new StringField('trigger', 'trigger'))->addFlags(new Required()),
             (new StringField('name', 'name'))->addFlags(new Required()),
             new AttributesField(),
             new CreatedAtField(),

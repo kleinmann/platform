@@ -29,5 +29,6 @@ class Content extends Bundle
         $loader->load('property.xml');
         $loader->load('cms.xml');
         $loader->load('mail_template.xml');
+        $loader->load('workflow.xml');
     }
 }

@@ -57,6 +57,10 @@ return [
                     'data' => [],
                     'links' => ['related' => '/api/rule/f343a3c119cf42a7841aa0ac5094908c/shipping-method-price-calculations'],
                 ],
+                'workflowRules' => [
+                    'data' => [],
+                    'links' => ['related' => '/api/rule/f343a3c119cf42a7841aa0ac5094908c/workflow-rules'],
+                ],
             ],
             'meta' => null,
         ],

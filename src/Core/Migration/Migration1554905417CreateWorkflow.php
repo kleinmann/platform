@@ -20,10 +20,14 @@ class Migration1554905417CreateWorkflow extends MigrationStep
                 `id`         BINARY(16)   NOT NULL
                     PRIMARY KEY,
                 `name`       VARCHAR(255) NOT NULL,
+                `trigger`    VARCHAR(255) NOT NULL,
                 `attributes` JSON         NULL,
                 `created_at` DATETIME     NOT NULL,
                 `updated_at` DATETIME     NULL
-            );'
+            );
+
+            CREATE INDEX `idx.trigger`
+                ON `workflow` (`trigger`);'
         );
 
         $connection->exec(

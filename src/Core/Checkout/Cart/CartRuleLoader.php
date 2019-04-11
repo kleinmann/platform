@@ -3,11 +3,10 @@
 namespace Shopware\Core\Checkout\Cart;
 
 use Shopware\Core\Checkout\Cart\Exception\CartTokenNotFoundException;
+use Shopware\Core\Checkout\Cart\Rule\CartRuleScope;
 use Shopware\Core\Content\Rule\RuleCollection;
-use Shopware\Core\Content\Rule\RuleEntity;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\Rule\Evaluator;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
 class CartRuleLoader
@@ -20,28 +19,23 @@ class CartRuleLoader
     private $cartPersister;
 
     /**
-     * @var EntityRepositoryInterface
-     */
-    private $repository;
-
-    /**
-     * @var RuleCollection
-     */
-    private $rules;
-
-    /**
      * @var Processor
      */
     private $processor;
 
+    /**
+     * @var Evaluator
+     */
+    private $evaluator;
+
     public function __construct(
         CartPersisterInterface $cartPersister,
         Processor $processor,
-        EntityRepositoryInterface $repository
+        Evaluator $evaluator
     ) {
         $this->cartPersister = $cartPersister;
-        $this->repository = $repository;
         $this->processor = $processor;
+        $this->evaluator = $evaluator;
     }
 
     public function loadByToken(SalesChannelContext $context, string $cartToken): RuleLoaderResult
@@ -62,13 +56,8 @@ class CartRuleLoader
 
     private function load(SalesChannelContext $context, Cart $cart, CartBehavior $behaviorContext): RuleLoaderResult
     {
-        $rules = $this->loadRules($context->getContext());
-
-        $rules->sortByPriority();
-
-        $context->setRuleIds($rules->getIds());
-
         $iteration = 1;
+        $rules = new RuleCollection([]);
 
         $valid = true;
         do {
@@ -76,8 +65,7 @@ class CartRuleLoader
                 break;
             }
 
-            //find rules which matching current cart and context state
-            $rules = $rules->filterMatchingRules($cart, $context);
+            $rules = $this->evaluator->getMatchingRules(new CartRuleScope($cart, $context), $context->getContext());
 
             //place rules into context for further usages
             $context->setRuleIds($rules->getIds());
@@ -97,25 +85,6 @@ class CartRuleLoader
         $context->setRuleIds($rules->getIds());
 
         return new RuleLoaderResult($cart, $rules);
-    }
-
-    private function loadRules(Context $context): RuleCollection
-    {
-        if ($this->rules !== null) {
-            return $this->rules;
-        }
-
-        /** @var RuleCollection $rules */
-        $rules = $this->repository->search(new Criteria(), $context)->getEntities();
-
-        /** @var RuleEntity $rule */
-        foreach ($rules as $key => $rule) {
-            if ($rule->isInvalid() || !$rule->getPayload()) {
-                $rules->remove($key);
-            }
-        }
-
-        return $this->rules = $rules;
     }
 
     private function cartChanged(Cart $previous, Cart $current): bool
