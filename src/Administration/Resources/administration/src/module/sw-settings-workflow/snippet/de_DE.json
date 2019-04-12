@@ -1,0 +1,69 @@
+{
+  "sw-settings-workflow": {
+    "general": {
+      "mainMenuItemGeneral": "Workflow",
+      "placeholderSearchBar": "Durchsuche alle Workflows",
+      "descriptionTextModule": "Verwaltung von Workflows."
+    },
+    "list": {
+      "textHeadline": "Workflows",
+      "buttonAddWorkflow": "Workflow erstellen",
+      "columnName": "Name",
+      "columnDescription": "Beschreibung",
+      "columnDateCreated": "Erstelldatum",
+      "columnPriority": "Priorität",
+      "columnStatus": "Status",
+      "contextMenuEdit": "Bearbeiten",
+      "contextMenuDelete": "Löschen",
+      "contextMenuDuplicate": "Duplizieren",
+      "buttonCancel": "Abbrechen",
+      "buttonDelete": "Löschen",
+      "textDeleteConfirm": "Möchtest Du den Workflow \"{name}\" wirklich löschen?",
+      "modalTitleDelete": "Workflow löschen",
+      "modalTitleBulkDelete": "Workflows löschen",
+      "textBulkDeleteConfirm": "Möchtest Du die ausgewählten Regeln wirklich löschen?",
+      "titleSidebarItemRefresh": "Aktualisieren",
+      "titleSidebarBulkTrash": "Regeln löschen",
+      "valid": "Valide",
+      "invalid": "Invalide",
+      "messageEmpty": "Noch keine Workflows"
+    },
+    "detail": {
+      "textHeadline": "Neuer Workflow",
+      "buttonCancel": "Abbrechen",
+      "buttonSave": "Speichern",
+      "buttonAdd": "Aktion hinzufügen",
+      "baseTitleCard": "Allgemein",
+      "actionsTitleCard": "Aktionen",
+      "labelName": "Name",
+      "labelDescription": "Beschreibung",
+      "labelPriority": "Priorität",
+      "labelTrigger": "Trigger",
+      "labelRules": "Regeln",
+      "placeholderName": "Lege einen Namen für diesen Workflow fest...",
+      "placeholderDescription": "Lege eine Beschreibung für diesen Workflow fest...",
+      "placeholderPriority": "Lege eine Priorität für diesen Workflow fest...",
+      "placeholderTrigger": "Wann soll was passieren?",
+      "placeholderAction": "Lege eine Aktion fest.",
+      "placeholderRules": "Welche Regeln müssen zutreffen?",
+      "titleSaveSuccess": "Erfolg",
+      "messageSaveSuccess": "Der Workflow \"{name}\" wurde erfolgreich gespeichert.",
+      "workflowCard": "Bedingungen",
+      "titleSaveError": "Fehler",
+      "messageSaveError": "Beim Speichern des Workflows \"{name}\" ist ein Fehler aufgetreten.",
+      "types": {
+        "dispatch": "Versandart",
+        "payment": "Zahlungart",
+        "price": "Preis"
+      }
+    },
+    "triggerStore": {
+      "register": "Nach der Registrierung...",
+      "afterOrder": "Nach einer Erfolgreichen Bestellung..."
+    },
+    "actionStore": {
+      "slack": "Slack Nachricht senden",
+      "email": "E-Mail verschicken"
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "sw-settings-workflow": {
+    "general": {
+      "mainMenuItemGeneral": "Workflow",
+      "placeholderSearchBar": "Search all workflow",
+      "descriptionTextModule": "Manage workflow here."
+    },
+    "list": {
+      "textHeadline": "Workflow",
+      "buttonAddWorkflow": "Create workflow",
+      "columnName": "Name",
+      "columnDescription": "Description",
+      "columnDateCreated": "Creation date",
+      "columnPriority": "Priority",
+      "columnStatus": "Status",
+      "contextMenuEdit": "Edit",
+      "contextMenuDelete": "Delete",
+      "contextMenuDuplicate": "Duplicate",
+      "buttonCancel": "Cancel",
+      "buttonDelete": "Delete",
+      "textDeleteConfirm": "Are you sure you want to delete the workflow \"{name}\"?",
+      "modalTitleDelete": "Delete workflow",
+      "modalTitleBulkDelete": "Delete Workflows",
+      "textBulkDeleteConfirm": "Are you sure you want to delete the selected workflows?",
+      "titleSidebarItemRefresh": "Refresh",
+      "titleSidebarBulkTrash": "Delete workflows",
+      "valid": "Valid",
+      "invalid": "Invalid",
+      "messageEmpty": "No workflows yet"
+    },
+    "detail": {
+      "textHeadline": "New workflow",
+      "buttonCancel": "Cancel",
+      "buttonSave": "Save",
+      "buttonAdd": "Add action",
+      "baseTitleCard": "General",
+      "actionsTitleCard": "Actions",
+      "labelName": "Name",
+      "labelDescription": "Description",
+      "labelPriority": "Priority",
+      "labelType": "Type",
+      "labelTrigger": "Trigger",
+      "labelRules": "Rules",
+      "placeholderName": "Set a name for this workflow...",
+      "placeholderDescription": "Set a description for this workflow...",
+      "placeholderPriority": "Set a priority for this workflow...",
+      "placeholderTrigger": "Which event should trigger?",
+      "placeholderAction": "Set an action.",
+      "placeholderRules": "Which rules needs to be correct?",
+      "titleSaveSuccess": "Success",
+      "messageSaveSuccess": "The workflow \"{name}\" has been saved successfully.",
+      "workflowCard": "Condition",
+      "titleSaveError": "Error",
+      "messageSaveError": "An error occurred while saving workflow \"{name}\".",
+      "types": {
+        "dispatch": "Dispatch",
+        "payment": "Payment",
+        "price": "Price"
+      }
+    },
+    "triggerStore": {
+      "register": "After registration...",
+      "afterOrder": "after order..."
+    },
+    "actionStore": {
+      "slack": "Send Slack Message",
+      "email": "Send E-Mail"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+@import "~scss/variables";
+
+$sw-settings-workflow-list-invalidColor: $color-crimson;
+
+.sw-settings-workflow-list {
+    .sw-settings-workflow-list-invalid {
+        color: $sw-settings-workflow-list-invalidColor;
+    }
+}

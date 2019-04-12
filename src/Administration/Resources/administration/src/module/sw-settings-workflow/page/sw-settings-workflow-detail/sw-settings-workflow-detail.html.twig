@@ -1,0 +1,117 @@
+{% block sw_settings_workflow_detail %}
+    <sw-page class="sw-settings-workflow-detail" v-if="workflow">
+        {% block sw_settings_workflow_detail_header %}
+            <template slot="smart-bar-header">
+                <h2 v-if="workflow.name">{{ workflow.name }}</h2>
+                <h2 v-else>{{ $tc('sw-settings-workflow.detail.textHeadline') }}</h2>
+            </template>
+        {% endblock %}
+
+        {% block sw_settings_workflow_detail_actions %}
+            <template slot="smart-bar-actions">
+
+                {% block sw_settings_workflow_detail_actions_cancel %}
+                    <sw-button :disabled="workflow.isLoading" :routerLink="{ name: 'sw.settings.workflow.index' }">
+                        {{ $tc('sw-settings-workflow.detail.buttonCancel') }}
+                    </sw-button>
+                {% endblock %}
+
+                {% block sw_settings_workflow_detail_actions_save %}
+                    <sw-button class="sw-settings-workflow-detail__save-action" variant="primary" :disabled="workflow.isLoading" @click="onSave">
+                        {{ $tc('sw-settings-workflow.detail.buttonSave') }}
+                    </sw-button>
+                {% endblock %}
+
+            </template>
+        {% endblock %}
+
+        {% block sw_settings_workflow_detail_content %}
+            <sw-card-view slot="content">
+                {% block sw_settings_workflow_detail_content_base %}
+                    <sw-card :large="true" :title="$tc('sw-settings-workflow.detail.baseTitleCard')">
+                        <sw-container grid="1fr 1fr" gap="0px 30px">
+                            <sw-container columns="2fr 1fr" gap="0px 32px">
+                                {% block sw_settings_workflow_detail_content_base_field_label %}
+                                    <sw-field type="text"
+                                              :label="$tc('sw-settings-workflow.detail.labelName')"
+                                              :placeholder="$tc('sw-settings-workflow.detail.placeholderName')"
+                                              validation="required"
+                                              v-model="workflow.name">
+                                    </sw-field>
+                                {% endblock %}
+
+                                {% block sw_settings_workflow_detail_content_base_field_priority %}
+                                    <sw-field type="number"
+                                              :label="$tc('sw-settings-workflow.detail.labelPriority')"
+                                              :placeholder="$tc('sw-settings-workflow.detail.placeholderPriority')"
+                                              validation="required"
+                                              v-model="workflow.priority">
+                                    </sw-field>
+                                {% endblock %}
+                            </sw-container>
+                                {% block sw_settings_workflow_detail_content_base_field_description %}
+                                    <sw-field type="textarea"
+                                              :label="$tc('sw-settings-workflow.detail.labelDescription')"
+                                              :placeholder="$tc('sw-settings-workflow.detail.placeholderDescription')"
+                                              v-model="workflow.description">
+                                    </sw-field>
+                                {% endblock %}
+
+                                {% block sw_settings_workflow_detail_content_base_field_trigger %}
+                                    <sw-single-select
+                                            :options="triggerValues"
+                                            :label="$tc('sw-settings-workflow.detail.labelTrigger')"
+                                            :placeholder="$tc('sw-settings-workflow.detail.placeholderTrigger')"
+                                            :required="true"
+                                            v-model="triggerValue">
+                                    </sw-single-select>
+                                {% endblock %}
+
+                                {% block sw_settings_workflow_detail_content_base_field_rules %}
+                                    <sw-entity-multi-select
+                                        :localMode="workflow.isNew()"
+                                        :label="$tc('sw-settings-workflow.detail.labelRules')"
+                                        :placeholder="$tc('sw-settings-workflow.detail.placeholderRules')"
+                                        :collection="workflow.workflowRules">
+                                    </sw-entity-multi-select>
+                                {% endblock %}
+                        </sw-container>
+                    </sw-card>
+                {% endblock %}
+
+                {% block sw_settings_workflow_detail_content_actions %}
+                <sw-card :large="true" :title="$tc('sw-settings-workflow.detail.actionsTitleCard')">
+                    <sw-container grid="1fr 1fr" gap="0px 30px">
+                        {% block sw_settings_workflow_detail_content_actions_field_actions %}
+                        <template v-if="actions.length > 0">
+                            <sw-single-select
+                                v-for="action, index in actionValues"
+                                :key="index"
+                                :options="actionValues"
+                                :placeholder="$tc('sw-settings-workflow.detail.placeholderAction')"
+                                validation="required"
+                                v-model="actionValues">
+                            </sw-single-select>
+                        </template>
+                        <template v-else>
+                            <sw-single-select
+                                :options="actionValues"
+                                :placeholder="$tc('sw-settings-workflow.detail.placeholderAction')"
+                                validation="required"
+                                v-model="actionValues">
+                            </sw-single-select>
+                        </template>
+                        {% endblock %}
+
+                        {% block sw_settings_workflow_detail_content_actions_field_add_action %}
+                            <sw-button variant="primary" class="sw-settings-workflow-method-detail__add-action" @click.prevent="onAddAction">
+                                {{ $tc('sw-settings-workflow.detail.buttonAdd') }}
+                            </sw-button>
+                        {% endblock %}
+                    </sw-container>
+                </sw-card>
+                {% endblock %}
+            </sw-card-view>
+        {% endblock %}
+    </sw-page>
+{% endblock %}
