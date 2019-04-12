@@ -20,7 +20,7 @@ Component.register('sw-settings-workflow-detail', {
             repository: null,
             workflow: null,
             triggerValue: null,
-            actionValue: null
+            actionValue: []
         };
     },
 
@@ -66,16 +66,25 @@ Component.register('sw-settings-workflow-detail', {
     methods: {
         createdComponent() {
             this.repository = this.repositoryFactory.create('workflow');
+            this.actionRepository = this.repositoryFactory.create('workflow_action');
 
             this.getWorkflow();
         },
 
         getWorkflow() {
+            /*
+            const criteria = new Criteria();
+            criteria.addAssociation('workflow.workflowActions', new Criteria())
+                .setIds([this.$route.params.id]);
+                */
+
             this.repository
                 .get(this.$route.params.id, this.context)
                 .then((entity) => {
                     this.workflow = entity;
                     this.triggerValue = this.workflow.trigger;
+
+                    console.log(entity);
                 });
         },
 
@@ -94,7 +103,19 @@ Component.register('sw-settings-workflow-detail', {
                 'sw-settings-workflow.detail.messageSaveError', 0, { name: this.workflow.name }
             );
 
+            console.log('workflow:', this.workflow);
             this.workflow.trigger = this.triggerValue;
+
+            this.actionValue = this.actionValue.filter(word => word.length > 0);
+            this.actionValue.forEach((action, index) => {
+                const actionVars = this.actionRepository.create(this.context);
+
+                actionVars.handlerIdentifier = action;
+                actionVars.priority = index;
+                actionVars.configuration = {};
+
+                this.workflow.workflowActions[index] = actionVars;
+            });
 
             // sends the request immediately
             this.repository
@@ -118,9 +139,7 @@ Component.register('sw-settings-workflow-detail', {
         },
 
         onAddAction() {
-            this.actions.push(
-                this.workflowActionStore.create()
-            );
+            this.actionValue.push('');
         }
     }
 });

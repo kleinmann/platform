@@ -83,14 +83,14 @@
                 <sw-card :large="true" :title="$tc('sw-settings-workflow.detail.actionsTitleCard')">
                     <sw-container grid="1fr 1fr" gap="0px 30px">
                         {% block sw_settings_workflow_detail_content_actions_field_actions %}
-                        <template v-if="actions.length > 0">
+                        <template v-if="actionValue.length > 0">
                             <sw-single-select
-                                v-for="action, index in actionValues"
+                                v-for="action, index in actionValue"
                                 :key="index"
                                 :options="actionValues"
                                 :placeholder="$tc('sw-settings-workflow.detail.placeholderAction')"
                                 validation="required"
-                                v-model="actionValues">
+                                v-model="actionValue[index]">
                             </sw-single-select>
                         </template>
                         <template v-else>
@@ -98,7 +98,7 @@
                                 :options="actionValues"
                                 :placeholder="$tc('sw-settings-workflow.detail.placeholderAction')"
                                 validation="required"
-                                v-model="actionValues">
+                                v-model="actionValue[0]">
                             </sw-single-select>
                         </template>
                         {% endblock %}
