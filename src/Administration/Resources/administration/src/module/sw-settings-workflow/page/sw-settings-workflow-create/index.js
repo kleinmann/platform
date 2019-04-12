@@ -13,6 +13,13 @@ Component.extend('sw-settings-workflow-create', 'sw-settings-workflow-detail', {
     methods: {
         getWorkflow() {
             this.workflow = this.repository.create(this.context);
+        },
+
+        onSave() {
+            return this.$super.onSave().then(() => {
+                console.log('HELP', this.workflow.id);
+                this.$router.push({ name: 'sw-settings-workflow-detail', params: { id: this.workflow.id } });
+            });
         }
     }
 });

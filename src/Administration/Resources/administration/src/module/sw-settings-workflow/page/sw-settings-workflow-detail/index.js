@@ -156,7 +156,7 @@ Component.register('sw-settings-workflow-detail', {
             });
 
             // sends the request immediately
-            this.repository
+            return this.repository
                 .save(this.workflow, this.context)
                 .then(() => {
                     // the entity is stateless, the new data has to be fetched from the server, if required
