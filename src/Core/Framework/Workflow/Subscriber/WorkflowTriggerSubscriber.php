@@ -2,25 +2,20 @@
 
 namespace Shopware\Core\Framework\Workflow\Subscriber;
 
+use function Flag\next1309;
 use Shopware\Core\Checkout\Customer\Event\CustomerRegistrationEvent;
 use Shopware\Core\Checkout\Order\Event\OrderEvent;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Event\BusinessEvents;
 use Shopware\Core\Framework\Struct\StructCollection;
+use Shopware\Core\Framework\Workflow\Message\ActionMessage;
 use Shopware\Core\Framework\Workflow\WorkflowService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class WorkflowTriggerSubscriber implements EventSubscriberInterface
 {
-    public const TRIGGER_CUSTOMER_REGISTRATION = 'customer.registration';
-    public const TRIGGER_ORDER = 'order';
-
-    public const TRIGGERS = [
-        self::TRIGGER_CUSTOMER_REGISTRATION,
-        self::TRIGGER_ORDER,
-    ];
-
     /**
      * @var WorkflowService
      */
@@ -36,11 +31,21 @@ class WorkflowTriggerSubscriber implements EventSubscriberInterface
      */
     private $orderRepository;
 
-    public function __construct(WorkflowService $workflowService, EntityRepositoryInterface $customerRepository, EntityRepositoryInterface $orderRepository)
+    /**
+     * @var MessageBusInterface
+     */
+    private $messageBus;
+
+    public function __construct(
+        WorkflowService $workflowService,
+        EntityRepositoryInterface $customerRepository,
+        EntityRepositoryInterface $orderRepository,
+        MessageBusInterface $messageBus)
     {
         $this->workflowService = $workflowService;
         $this->customerRepository = $customerRepository;
         $this->orderRepository = $orderRepository;
+        $this->messageBus = $messageBus;
     }
 
     public static function getSubscribedEvents(): array
@@ -60,7 +65,14 @@ class WorkflowTriggerSubscriber implements EventSubscriberInterface
         $data = new StructCollection();
         $data->set('customer', $this->customerRepository->search(new Criteria([$event->getCustomerId()]), $event->getContext())->first());
 
-        $this->workflowService->executeForTrigger(self::TRIGGER_CUSTOMER_REGISTRATION, $event->getSalesChannelContext(), $data);
+        if (next1309()) {
+            $message = new ActionMessage(BusinessEvents::CHECKOUT_CUSTOMER_REGISTRATION, $data, $event->getSalesChannelContext());
+            $this->messageBus->dispatch($message);
+
+            return;
+        }
+
+        $this->workflowService->executeForTrigger(BusinessEvents::CHECKOUT_CUSTOMER_REGISTRATION, $event->getSalesChannelContext(), $data);
     }
 
     public function onOrder(OrderEvent $event)
@@ -68,6 +80,13 @@ class WorkflowTriggerSubscriber implements EventSubscriberInterface
         $data = new StructCollection();
         $data->set('order', $this->orderRepository->search(new Criteria([$event->getOrderId()]), $event->getContext())->first());
 
-        $this->workflowService->executeForTrigger(self::TRIGGER_ORDER, $event->getSalesChannelContext(), $data);
+        if (next1309()) {
+            $message = new ActionMessage(BusinessEvents::CHECKOUT_ORDER, $data, $event->getSalesChannelContext());
+            $this->messageBus->dispatch($message);
+
+            return;
+        }
+
+        $this->workflowService->executeForTrigger(BusinessEvents::CHECKOUT_CUSTOMER_REGISTRATION, $event->getSalesChannelContext(), $data);
     }
 }

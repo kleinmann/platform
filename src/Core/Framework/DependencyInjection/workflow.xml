@@ -31,7 +31,14 @@
             <argument type="service" id="Shopware\Core\Framework\Workflow\WorkflowService"/>
             <argument type="service" id="customer.repository"/>
             <argument type="service" id="order.repository"/>
+            <argument type="service" id="messenger.bus.shopware"/>
             <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="Shopware\Core\Framework\Workflow\Message\ActionHandler">
+            <argument type="service" id="Shopware\Core\Framework\Workflow\WorkflowService"/>
+
+            <tag name="messenger.message_handler"/>
         </service>
     </services>
 </container>
