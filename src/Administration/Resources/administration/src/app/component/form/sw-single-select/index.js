@@ -124,7 +124,7 @@ export default {
 
         loadSelected() {
             this.resolveKey(this.value).then((item) => {
-                this.singleSelection = item;
+                this.singleSelection = item === undefined ? null : item;
             });
         },
 
