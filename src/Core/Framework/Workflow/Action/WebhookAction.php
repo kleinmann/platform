@@ -7,8 +7,6 @@ use Shopware\Core\Framework\Struct\Collection;
 use Shopware\Core\Framework\Twig\StringTemplateRenderer;
 use Shopware\Core\Framework\Validation\Exception\ConstraintViolationException;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -60,11 +58,11 @@ class WebhookAction implements ActionInterface
             new Assert\Collection(
                 [
                     'method' => [
-                        new NotBlank(),
+                        new Assert\NotBlank(),
                     ],
                     'url' => [
-                        new NotBlank(),
-                        new Url(),
+                        new Assert\NotBlank(),
+                        new Assert\Url(),
                     ],
                 ]
             )

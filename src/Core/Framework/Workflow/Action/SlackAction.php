@@ -7,7 +7,6 @@ use Shopware\Core\Framework\Struct\Collection;
 use Shopware\Core\Framework\Twig\StringTemplateRenderer;
 use Shopware\Core\Framework\Validation\Exception\ConstraintViolationException;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -60,10 +59,10 @@ class SlackAction implements ActionInterface
             new Assert\Collection(
                 [
                     'slackWebHook' => [
-                        new NotBlank(),
+                        new Assert\NotBlank(),
                     ],
                     'text' => [
-                        new NotBlank(),
+                        new Assert\NotBlank(),
                     ],
                 ]
             )
