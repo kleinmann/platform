@@ -40,7 +40,7 @@ class WebhookAction implements ActionInterface
         }
 
         $options = !empty($configuration['options'])
-            ? json_decode($this->stringTemplateRenderer->render($configuration['options'], $data->getElements()), true)
+            ? json_decode($this->stringTemplateRenderer->render(json_encode($configuration['options']), $data->getElements()), true)
             : [];
 
         $client = new Client();
@@ -64,6 +64,7 @@ class WebhookAction implements ActionInterface
                         new Assert\NotBlank(),
                         new Assert\Url(),
                     ],
+                    'options' => [],
                 ]
             )
         );
