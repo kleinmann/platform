@@ -81,6 +81,7 @@ Component.register('sw-settings-workflow-detail', {
     methods: {
         createdComponent() {
             this.repository = this.repositoryFactory.create('workflow');
+            this.actionRepository = this.repositoryFactory.create('workflow_action');
 
             this.getWorkflow();
         },
