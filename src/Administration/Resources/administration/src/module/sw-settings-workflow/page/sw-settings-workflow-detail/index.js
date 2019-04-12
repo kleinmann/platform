@@ -2,6 +2,7 @@ import { Component, Mixin, State } from 'src/core/shopware';
 import { warn } from 'src/core/service/utils/debug.utils';
 import template from './sw-settings-workflow-detail.html.twig';
 import './sw-settings-workflow-detail.scss';
+import Criteria from '../../../../core/data-new/criteria.data';
 
 Component.register('sw-settings-workflow-detail', {
     template,
@@ -18,8 +19,11 @@ Component.register('sw-settings-workflow-detail', {
     data() {
         return {
             repository: null,
+            actionRepository: null,
+            ruleRepository: null,
             workflow: null,
             triggerValue: null,
+            ruleValue: [],
             actionValue: []
         };
     },
@@ -27,6 +31,17 @@ Component.register('sw-settings-workflow-detail', {
     computed: {
         workflowActionStore() {
             return State.getStore('workflow_action');
+        },
+
+        workflowStore() {
+            return State.getStore('workflow');
+        },
+
+        ruleStore() {
+            return State.getStore('rule');
+        },
+        ruleAssociationsStore() {
+            return this.workflowStore.getById(this.$route.params.id).getAssociation('workflowRules');
         },
 
         // TODO: change to service
@@ -66,26 +81,49 @@ Component.register('sw-settings-workflow-detail', {
     methods: {
         createdComponent() {
             this.repository = this.repositoryFactory.create('workflow');
-            this.actionRepository = this.repositoryFactory.create('workflow_action');
 
             this.getWorkflow();
         },
 
         getWorkflow() {
-            /*
             const criteria = new Criteria();
-            criteria.addAssociation('workflow.workflowActions', new Criteria())
-                .setIds([this.$route.params.id]);
-                */
 
             this.repository
-                .get(this.$route.params.id, this.context)
+                .get(this.$route.params.id, this.context, criteria)
                 .then((entity) => {
                     this.workflow = entity;
                     this.triggerValue = this.workflow.trigger;
 
+                    this.actionRepository = this.repositoryFactory.create(
+                        this.workflow.workflowActions.entity,
+                        this.workflow.workflowActions.source
+                    );
+                    this.ruleRepository = this.repositoryFactory.create(
+                        this.workflow.workflowRules.entity,
+                        this.workflow.workflowRules.source
+                    );
+
+                    this.actionRepository.search(new Criteria(), this.context).then((actions) => {
+                        this.workflow.workflowActions = actions;
+
+                        Object.keys(actions).forEach((action) => {
+                            this.actionValue.push(actions[action].handlerIdentifier);
+                        });
+                    });
+                    this.ruleRepository.search(new Criteria(), this.context).then((rules) => {
+                        this.workflow.workflowRules = rules;
+                    });
+
                     console.log(entity);
                 });
+
+            this.rules = this.ruleStore.getList().then((response) => {
+                this.total = response.total;
+                this.rules = response.items;
+                this.isLoading = false;
+
+                return this.rules;
+            });
         },
 
         onSave() {
@@ -103,7 +141,6 @@ Component.register('sw-settings-workflow-detail', {
                 'sw-settings-workflow.detail.messageSaveError', 0, { name: this.workflow.name }
             );
 
-            console.log('workflow:', this.workflow);
             this.workflow.trigger = this.triggerValue;
 
             this.actionValue = this.actionValue.filter(word => word.length > 0);

@@ -68,12 +68,14 @@
                                 {% endblock %}
 
                                 {% block sw_settings_workflow_detail_content_base_field_rules %}
-                                    <sw-entity-multi-select
-                                        :localMode="workflow.isNew()"
-                                        :label="$tc('sw-settings-workflow.detail.labelRules')"
-                                        :placeholder="$tc('sw-settings-workflow.detail.placeholderRules')"
-                                        :collection="workflow.workflowRules">
-                                    </sw-entity-multi-select>
+                                    <sw-select multi
+                                               :required="true"
+                                               :label="$tc('sw-settings-workflow.detail.labelRules')"
+                                               :placeholder="$tc('sw-settings-workflow.detail.placeholderRules')"
+                                               :store="ruleStore"
+                                               :associationStore="ruleAssociationsStore"
+                                               :v-model="ruleValue">
+                                    </sw-select>
                                 {% endblock %}
                         </sw-container>
                     </sw-card>
