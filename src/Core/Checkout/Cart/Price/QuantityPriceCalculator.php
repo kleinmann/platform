@@ -3,13 +3,15 @@
 namespace Shopware\Core\Checkout\Cart\Price;
 
 use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
+use Shopware\Core\Checkout\Cart\Price\Struct\PriceCollection;
+use Shopware\Core\Checkout\Cart\Price\Struct\PriceDefinitionInterface;
 use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
 use Shopware\Core\Checkout\Cart\Tax\Struct\CalculatedTaxCollection;
 use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRuleCollection;
 use Shopware\Core\Checkout\Cart\Tax\TaxDetector;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
-class QuantityPriceCalculator
+class QuantityPriceCalculator implements PriceCalculatorInterface
 {
     /**
      * @var GrossPriceCalculator
@@ -43,12 +45,21 @@ class QuantityPriceCalculator
         $this->referencePriceCalculator = $referencePriceCalculator;
     }
 
-    public function calculate(QuantityPriceDefinition $definition, SalesChannelContext $context): CalculatedPrice
+    public function supports(PriceDefinitionInterface $priceDefinition): bool
     {
+        return $priceDefinition instanceof QuantityPriceDefinition;
+    }
+
+    public function calculate(PriceDefinitionInterface $priceDefinition, PriceCollection $prices, SalesChannelContext $context): CalculatedPrice
+    {
+        if (!($priceDefinition instanceof QuantityPriceDefinition)) {
+            throw new \RuntimeException();
+        }
+
         if ($this->taxDetector->useGross($context)) {
-            $price = $this->grossPriceCalculator->calculate($definition);
+            $price = $this->grossPriceCalculator->calculate($priceDefinition);
         } else {
-            $price = $this->netPriceCalculator->calculate($definition);
+            $price = $this->netPriceCalculator->calculate($priceDefinition);
         }
 
         $taxRules = $price->getTaxRules();
@@ -65,7 +76,7 @@ class QuantityPriceCalculator
             $calculatedTaxes,
             $taxRules,
             $price->getQuantity(),
-            $this->referencePriceCalculator->calculate($price->getUnitPrice(), $definition),
+            $this->referencePriceCalculator->calculate($price->getUnitPrice(), $priceDefinition),
             $price->getListPrice()
         );
     }

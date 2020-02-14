@@ -22,6 +22,11 @@ class AbsolutePriceDefinition extends Struct implements PriceDefinitionInterface
     protected $price;
 
     /**
+     * @var int
+     */
+    protected $quantity;
+
+    /**
      * Allows to define a filter rule which line items should be considered for percentage discount/surcharge
      *
      * @var Rule|null
@@ -33,11 +38,12 @@ class AbsolutePriceDefinition extends Struct implements PriceDefinitionInterface
      */
     protected $precision;
 
-    public function __construct(float $price, int $precision, ?Rule $filter = null)
+    public function __construct(float $price, int $precision, ?Rule $filter = null, $quantity = 1)
     {
         $this->price = $price;
         $this->filter = $filter;
         $this->precision = $precision;
+        $this->quantity = $quantity;
     }
 
     public function getFilter(): ?Rule
@@ -53,6 +59,11 @@ class AbsolutePriceDefinition extends Struct implements PriceDefinitionInterface
     public function getPrecision(): int
     {
         return $this->precision;
+    }
+
+    public function getQuantity(): int
+    {
+        return $this->quantity;
     }
 
     public function getType(): string

@@ -174,6 +174,6 @@ class DeliveryCalculator
 
         $definition = new QuantityPriceDefinition($price, $rules, $context->getContext()->getCurrencyPrecision(), 1, true);
 
-        return $this->priceCalculator->calculate($definition, $context);
+        return $this->priceCalculator->calculate($definition, $calculatedLineItems->getPrices(), $context);
     }
 }

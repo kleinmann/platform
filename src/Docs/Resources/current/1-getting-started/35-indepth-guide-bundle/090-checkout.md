@@ -688,12 +688,8 @@ use Shopware\Core\Checkout\Cart\CartDataCollectorInterface;
 use Shopware\Core\Checkout\Cart\CartProcessorInterface;
 use Shopware\Core\Checkout\Cart\LineItem\CartDataCollection;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
-use Shopware\Core\Checkout\Cart\Price\AbsolutePriceCalculator;
-use Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator;
-use Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator;
-use Shopware\Core\Checkout\Cart\Price\Struct\AbsolutePriceDefinition;
-use Shopware\Core\Checkout\Cart\Price\Struct\PercentagePriceDefinition;
-use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
+use Shopware\Core\Checkout\Cart\Price\CalculatorInterface;
+use Shopware\Core\Checkout\Cart\Price\Struct\PriceCollection;use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
@@ -702,30 +698,16 @@ class BundleCartProcessor implements CartProcessorInterface, CartDataCollectorIn
     // ...
 
     /**
-     * @var PercentagePriceCalculator
+     * @var CalculatorInterface 
      */
-    private $percentagePriceCalculator;
-
-    /**
-     * @var AbsolutePriceCalculator
-     */
-    private $absolutePriceCalculator;
-    
-    /**
-     * @var QuantityPriceCalculator
-     */
-    private $quantityPriceCalculator;
+    private $calculator;
 
     public function __construct(
         EntityRepositoryInterface $bundleRepository,
-        PercentagePriceCalculator $percentagePriceCalculator,
-        AbsolutePriceCalculator $absolutePriceCalculator,
-        QuantityPriceCalculator $quantityPriceCalculator
+        CalculatorInterface $calculator
     )
     {
-        $this->percentagePriceCalculator = $percentagePriceCalculator;
-        $this->absolutePriceCalculator = $absolutePriceCalculator;
-        $this->quantityPriceCalculator = $quantityPriceCalculator;
+        $this->calculator = $calculator;
     }
 
     public function collect(CartDataCollection $data, Cart $original, SalesChannelContext $context, CartBehavior $behavior): void
@@ -774,7 +756,7 @@ class BundleCartProcessor implements CartProcessorInterface, CartDataCollectorIn
             $priceDefinition = $product->getPriceDefinition();
 
             $product->setPrice(
-                $this->quantityPriceCalculator->calculate($priceDefinition, $context)
+                $this->calculator->calculatePriceDefinition($priceDefinition, new PriceCollection(), $context)
             );
         }
     }
@@ -797,27 +779,11 @@ class BundleCartProcessor implements CartProcessorInterface, CartDataCollectorIn
             return;
         }
 
-        switch (\get_class($priceDefinition)) {
-            case AbsolutePriceDefinition::class:
-                $price = $this->absolutePriceCalculator->calculate(
-                    $priceDefinition->getPrice(),
-                    $childPrices,
-                    $context,
-                    $bundleLineItem->getQuantity()
-                );
-                break;
-
-            case PercentagePriceDefinition::class:
-                $price = $this->percentagePriceCalculator->calculate(
-                    $priceDefinition->getPercentage(),
-                    $childPrices,
-                    $context
-                );
-                break;
-
-            default:
-                throw new \RuntimeException('Invalid discount type.');
-        }
+        $price = $this->calculator->calculatePriceDefinition(
+            $priceDefinition,
+            $childPrices,
+            $context
+        );
 
         $discount->setPrice($price);
     }
@@ -898,7 +864,7 @@ private function calculateChildProductPrices(LineItem $bundleLineItem, SalesChan
         $priceDefinition = $product->getPriceDefinition();
 
         $product->setPrice(
-            $this->quantityPriceCalculator->calculate($priceDefinition, $context)
+            $this->calculator->calculatePriceDefinition($priceDefinition, new PriceCollection(), $context)
         );
     }
 }
@@ -907,9 +873,9 @@ private function calculateChildProductPrices(LineItem $bundleLineItem, SalesChan
 First, you filter the children of the bundle line item to the type `LineItem::PRODUCT_LINE_ITEM_TYPE`.
 Since these line items were enriched with data by the `ProductCartProcessor` already, you can now use `getPriceDefinition()` to access the price definition of the product.
 
-The return value now contains a `\Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition`, which can be easily calculated using the corresponding `\Shopware\Core\Checkout\Cart\Cart\Price\QuantityPriceCalculator`.
+The return value now contains a `\Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition`, which can be easily calculated using the `\Shopware\Core\Checkout\Cart\Cart\Price\Calculator`.
 ```
-$this->quantityPriceCalculator->calculate($priceDefinition, $context)
+$this->calculator->calculatePriceDefinition($priceDefinition, new PriceCollection(), $context)
 ```
 
 Now that the products have been calculated, you can calculate the discount's value using the `calculateDiscountPrice()` method.
@@ -933,36 +899,18 @@ private function calculateDiscountPrice(LineItem $bundleLineItem, SalesChannelCo
         return;
     }
 
-    switch (\get_class($priceDefinition)) {
-        case AbsolutePriceDefinition::class:
-            $price = $this->absolutePriceCalculator->calculate(
-                $priceDefinition->getPrice(),
-                $childPrices,
-                $context,
-                $bundleLineItem->getQuantity()
-            );
-            break;
-
-        case PercentagePriceDefinition::class:
-            $price = $this->percentagePriceCalculator->calculate(
-                $priceDefinition->getPercentage(),
-                $childPrices,
-                $context
-            );
-            break;
-
-        default:
-            throw new \RuntimeException('Invalid discount type.');
-    }
+    $price = $this->calculator->calculatePriceDefinition(
+        $priceDefinition,
+        $childPrices,
+        $context
+    );
 
     $discount->setPrice($price);
 }
 ```
 
 Since a discount is a price which is calculated on the basis of other prices, the taxes of such a discount must also be calculated proportionately.
-If you do not want to do this yourself, you can simply use one of the two calculators from the core:
-* `\Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator` Calculates prices based on a percentage value relative to the discounting prices.
-* `\Shopware\Core\Checkout\Cart\Price\AbsolutePriceCalculator` Calculates prices based on an absolute price relative to the discounting prices.
+If you do not want to do this yourself, you can simply use the core calculator.
 
 However, in order to calculate the taxes proportionately, both calculators need to have a `\Shopware\Core\Framework\DataAbstractionLayer\Pricing\PriceCollection` in which the prices to be discounted are located.
 In your case it is the prices of the products that are in the bundle line item stored as children. 
@@ -974,52 +922,16 @@ $childPrices = $bundleLineItem->getChildren()
     ->getPrices();
 ```
 
-The corresponding calculator is then called depending on the discount type (absolute or percentage):
+The calculator is then called:
 
 ```php
-switch (\get_class($priceDefinition)) {
-    case AbsolutePriceDefinition::class:
-        $price = $this->absolutePriceCalculator->calculate(
-            $priceDefinition->getPrice(),
-            $childPrices,
-            $context,
-            $bundleLineItem->getQuantity()
-        );
-        break;
-
-    case PercentagePriceDefinition::class:
-        $price = $this->percentagePriceCalculator->calculate(
-            $priceDefinition->getPercentage(),
-            $childPrices,
-            $context
-        );
-        break;
-
-    default:
-        throw new \RuntimeException('Invalid discount type.');
-}
-
-$discount->setPrice($price);
-```
-
-If it is a `PercentagePriceDefinition`, you call the `PercentagePriceCalculator`:
-```php
-$price = $this->percentagePriceCalculator->calculate(
-    $priceDefinition->getPercentage(), 
-    $childPrices, 
+$price = $this->calculator->calculatePriceDefinition(
+    $priceDefinition,
+    $childPrices,
     $context
 );
-```
 
-If it is a `AbsolutePriceDefinition`, you call the `AbsolutePriceCalculator`.
-This even allows you to pass a `quantity` as a fourth parameter to define how often this discount should be fended off. 
-```php
-$price = $this->absolutePriceCalculator->calculate(
-    $priceDefinition->getPrice(),
-    $childPrices,
-    $context,
-    $bundleLineItem->getQuantity()
-);
+$discount->setPrice($price);
 ```
 
 Now that all product prices and the discount have been calculated, you only have to calculate the total price of the bundle and then transfer the bundle to the new shopping cart.

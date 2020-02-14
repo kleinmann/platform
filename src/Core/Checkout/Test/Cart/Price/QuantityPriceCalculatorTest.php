@@ -10,6 +10,7 @@ use Shopware\Core\Checkout\Cart\Price\PriceRoundingInterface;
 use Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator;
 use Shopware\Core\Checkout\Cart\Price\ReferencePriceCalculator;
 use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
+use Shopware\Core\Checkout\Cart\Price\Struct\PriceCollection;
 use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
 use Shopware\Core\Checkout\Cart\Tax\Struct\CalculatedTax;
 use Shopware\Core\Checkout\Cart\Tax\Struct\CalculatedTaxCollection;
@@ -46,6 +47,7 @@ class QuantityPriceCalculatorTest extends TestCase
 
         $lineItemPrice = $calculator->calculate(
             $priceDefinition,
+            new PriceCollection(),
             Generator::createSalesChannelContext()
         );
 
@@ -79,7 +81,7 @@ class QuantityPriceCalculatorTest extends TestCase
 
         $context = $this->createMock(SalesChannelContext::class);
 
-        $lineItemPrice = $calculator->calculate($priceDefinition, $context);
+        $lineItemPrice = $calculator->calculate($priceDefinition, new PriceCollection(), $context);
 
         static::assertEquals($expected, $lineItemPrice);
     }
@@ -111,7 +113,7 @@ class QuantityPriceCalculatorTest extends TestCase
 
         $context = $this->createMock(SalesChannelContext::class);
 
-        $lineItemPrice = $calculator->calculate($priceDefinition, $context);
+        $lineItemPrice = $calculator->calculate($priceDefinition, new PriceCollection(), $context);
 
         static::assertEquals($expected, $lineItemPrice);
     }

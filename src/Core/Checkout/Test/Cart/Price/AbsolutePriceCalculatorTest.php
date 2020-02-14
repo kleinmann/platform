@@ -9,8 +9,10 @@ use Shopware\Core\Checkout\Cart\Price\NetPriceCalculator;
 use Shopware\Core\Checkout\Cart\Price\PriceRounding;
 use Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator;
 use Shopware\Core\Checkout\Cart\Price\ReferencePriceCalculator;
+use Shopware\Core\Checkout\Cart\Price\Struct\AbsolutePriceDefinition;
 use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
 use Shopware\Core\Checkout\Cart\Price\Struct\PriceCollection;
+use Shopware\Core\Checkout\Cart\Price\Struct\PriceDefinitionInterface;
 use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
 use Shopware\Core\Checkout\Cart\Tax\PercentageTaxRuleBuilder;
 use Shopware\Core\Checkout\Cart\Tax\Struct\CalculatedTax;
@@ -47,7 +49,7 @@ class AbsolutePriceCalculatorTest extends TestCase
         );
 
         $calculatedPrice = $calculator->calculate(
-            $calculation->getDiscount(),
+            $calculation->getDefinition(),
             $calculation->getPrices(),
             Generator::createSalesChannelContext()
         );
@@ -72,10 +74,10 @@ class AbsolutePriceCalculatorTest extends TestCase
         $calculator = $this->createQuantityPriceCalculator();
 
         $definition = new QuantityPriceDefinition(30, new TaxRuleCollection([new TaxRule(19)]), 2, 1, true);
-        $price1 = $calculator->calculate($definition, Generator::createSalesChannelContext());
+        $price1 = $calculator->calculate($definition, new PriceCollection(), Generator::createSalesChannelContext());
 
         $definition = new QuantityPriceDefinition(30, new TaxRuleCollection([new TaxRule(7)]), 2, 1, true);
-        $price2 = $calculator->calculate($definition, Generator::createSalesChannelContext());
+        $price2 = $calculator->calculate($definition, new PriceCollection(), Generator::createSalesChannelContext());
 
         return new AbsoluteCalculation(
             -6,
@@ -157,9 +159,9 @@ class AbsoluteCalculation
         $this->prices = $prices;
     }
 
-    public function getDiscount(): float
+    public function getDefinition(): PriceDefinitionInterface
     {
-        return $this->discount;
+        return new AbsolutePriceDefinition($this->discount, 2);
     }
 
     public function getExpected(): CalculatedPrice

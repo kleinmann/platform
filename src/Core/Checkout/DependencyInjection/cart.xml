@@ -44,6 +44,10 @@
 
         <service id="Shopware\Core\Checkout\Cart\Price\PriceRounding"/>
 
+        <service id="Shopware\Core\Checkout\Cart\Price\Calculator">
+            <argument type="tagged" tag="shopware.cart.calculator"/>
+        </service>
+
         <service id="Shopware\Core\Checkout\Cart\Price\ReferencePriceCalculator">
             <argument type="service" id="Shopware\Core\Checkout\Cart\Price\PriceRounding"/>
         </service>
@@ -53,6 +57,8 @@
             <argument type="service" id="Shopware\Core\Checkout\Cart\Price\NetPriceCalculator"/>
             <argument type="service" id="Shopware\Core\Checkout\Cart\Tax\TaxDetector"/>
             <argument type="service" id="Shopware\Core\Checkout\Cart\Price\ReferencePriceCalculator"/>
+
+            <tag name="shopware.cart.calculator" priority="1000"/>
         </service>
 
         <service id="Shopware\Core\Checkout\Cart\Price\GrossPriceCalculator">
@@ -70,11 +76,15 @@
         <service id="Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator">
             <argument type="service" id="Shopware\Core\Checkout\Cart\Price\PriceRounding"/>
             <argument type="service" id="Shopware\Core\Checkout\Cart\Tax\PercentageTaxRuleBuilder"/>
+
+            <tag name="shopware.cart.calculator" priority="2000"/>
         </service>
 
         <service id="Shopware\Core\Checkout\Cart\Price\AbsolutePriceCalculator">
             <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator"/>
             <argument type="service" id="Shopware\Core\Checkout\Cart\Tax\PercentageTaxRuleBuilder"/>
+
+            <tag name="shopware.cart.calculator" priority="3000"/>
         </service>
 
         <!-- Tax calculation -->
@@ -131,9 +141,7 @@
         </service>
 
         <service id="Shopware\Core\Checkout\Cart\Calculator" public="true">
-            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator"/>
-            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator"/>
-            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\AbsolutePriceCalculator"/>
+            <argument type="tagged" tag="shopware.cart.calculator"></argument>
         </service>
 
         <service id="Shopware\Core\Checkout\Cart\Delivery\DeliveryProcessor">

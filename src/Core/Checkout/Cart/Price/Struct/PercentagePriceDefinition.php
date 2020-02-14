@@ -17,7 +17,7 @@ class PercentagePriceDefinition extends Struct implements PriceDefinitionInterfa
     public const SORTING_PRIORITY = 50;
 
     /**
-     * @var float
+     * @var float Provide a negative percentage value for discount or a positive percentage value for a surcharge (e.g. 10.00 for 10%, -10.0 for -10%)
      */
     protected $percentage;
 

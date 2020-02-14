@@ -10,7 +10,9 @@ use Shopware\Core\Checkout\Cart\Price\PriceRounding;
 use Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator;
 use Shopware\Core\Checkout\Cart\Price\ReferencePriceCalculator;
 use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
+use Shopware\Core\Checkout\Cart\Price\Struct\PercentagePriceDefinition;
 use Shopware\Core\Checkout\Cart\Price\Struct\PriceCollection;
+use Shopware\Core\Checkout\Cart\Price\Struct\PriceDefinitionInterface;
 use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
 use Shopware\Core\Checkout\Cart\Tax\PercentageTaxRuleBuilder;
 use Shopware\Core\Checkout\Cart\Tax\Struct\CalculatedTax;
@@ -33,7 +35,7 @@ class PercentagePriceCalculatorTest extends TestCase
         $calculator = new PercentagePriceCalculator($rounding, new PercentageTaxRuleBuilder());
 
         $price = $calculator->calculate(
-            $calculation->getPercentageDiscount(),
+            $calculation->getDefinition(),
             $calculation->getPrices(),
             Generator::createSalesChannelContext()
         );
@@ -62,7 +64,7 @@ class PercentagePriceCalculatorTest extends TestCase
 
         $priceDefinition = new QuantityPriceDefinition(100.00, new TaxRuleCollection([new TaxRule(20, 100)]), 2, 5, true);
 
-        $price = $calculator->calculate($priceDefinition, Generator::createSalesChannelContext());
+        $price = $calculator->calculate($priceDefinition, new PriceCollection(), Generator::createSalesChannelContext());
         static::assertSame(500.00, $price->getTotalPrice());
         static::assertSame(83.33, $price->getCalculatedTaxes()->getAmount());
 
@@ -86,7 +88,7 @@ class PercentagePriceCalculatorTest extends TestCase
 
         $priceDefinition = new QuantityPriceDefinition(29.00, new TaxRuleCollection([new TaxRule(17, 100)]), 2, 10, true);
 
-        $price = $calculator->calculate($priceDefinition, Generator::createSalesChannelContext());
+        $price = $calculator->calculate($priceDefinition, new PriceCollection(), Generator::createSalesChannelContext());
 
         return new PercentageCalculation(
             -100,
@@ -107,10 +109,10 @@ class PercentagePriceCalculatorTest extends TestCase
         $calculator = $this->createQuantityPriceCalculator();
 
         $definition = new QuantityPriceDefinition(30, new TaxRuleCollection([new TaxRule(19)]), 2, 1, true);
-        $price1 = $calculator->calculate($definition, Generator::createSalesChannelContext());
+        $price1 = $calculator->calculate($definition, new PriceCollection(), Generator::createSalesChannelContext());
 
         $definition = new QuantityPriceDefinition(30, new TaxRuleCollection([new TaxRule(7)]), 2, 1, true);
-        $price2 = $calculator->calculate($definition, Generator::createSalesChannelContext());
+        $price2 = $calculator->calculate($definition, new PriceCollection(), Generator::createSalesChannelContext());
 
         return new PercentageCalculation(
             -10,
@@ -166,9 +168,9 @@ class PercentageCalculation
         $this->prices = $prices;
     }
 
-    public function getPercentageDiscount(): float
+    public function getDefinition(): PriceDefinitionInterface
     {
-        return $this->percentageDiscount;
+        return new PercentagePriceDefinition($this->percentageDiscount, 2);
     }
 
     public function getExpected(): CalculatedPrice

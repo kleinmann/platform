@@ -5,13 +5,8 @@ namespace Shopware\Core\Checkout\Cart;
 use Shopware\Core\Checkout\Cart\Exception\MissingLineItemPriceException;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Checkout\Cart\LineItem\LineItemCollection;
-use Shopware\Core\Checkout\Cart\Price\AbsolutePriceCalculator;
-use Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator;
-use Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator;
-use Shopware\Core\Checkout\Cart\Price\Struct\AbsolutePriceDefinition;
+use Shopware\Core\Checkout\Cart\Price\CalculatorInterface;
 use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
-use Shopware\Core\Checkout\Cart\Price\Struct\PercentagePriceDefinition;
-use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
 use Shopware\Core\Checkout\Cart\Rule\LineItemScope;
 use Shopware\Core\Framework\Rule\Rule;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
@@ -19,28 +14,13 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 class Calculator
 {
     /**
-     * @var QuantityPriceCalculator
+     * @var Calculator
      */
-    private $quantityPriceCalculator;
+    private $calculator;
 
-    /**
-     * @var PercentagePriceCalculator
-     */
-    private $percentagePriceCalculator;
-
-    /**
-     * @var AbsolutePriceCalculator
-     */
-    private $absolutePriceCalculator;
-
-    public function __construct(
-        QuantityPriceCalculator $quantityPriceCalculator,
-        PercentagePriceCalculator $percentagePriceCalculator,
-        AbsolutePriceCalculator $absolutePriceCalculator
-    ) {
-        $this->quantityPriceCalculator = $quantityPriceCalculator;
-        $this->percentagePriceCalculator = $percentagePriceCalculator;
-        $this->absolutePriceCalculator = $absolutePriceCalculator;
+    public function __construct(CalculatorInterface $calculator)
+    {
+        $this->calculator = $calculator;
     }
 
     public function calculate(LineItemCollection $lineItems, SalesChannelContext $context, CartBehavior $behavior): LineItemCollection
@@ -97,28 +77,14 @@ class Calculator
 
         $definition = $lineItem->getPriceDefinition();
 
-        if ($definition instanceof AbsolutePriceDefinition) {
-            //reduce line items for provided filter
-            $prices = $this->filterLineItems($calculated, $definition->getFilter(), $context)
-                ->getPrices();
-
-            return $this->absolutePriceCalculator->calculate($definition->getPrice(), $prices, $context);
+        if (!$definition) {
+            throw new MissingLineItemPriceException($lineItem->getId());
         }
 
-        if ($definition instanceof PercentagePriceDefinition) {
-            //reduce line items for provided filter
-            $prices = $this->filterLineItems($calculated, $definition->getFilter(), $context)
-                ->getPrices();
+        //reduce line items for provided filter
+        $prices = $this->filterLineItems($calculated, $definition->getFilter(), $context)
+            ->getPrices();
 
-            return $this->percentagePriceCalculator->calculate($definition->getPercentage(), $prices, $context);
-        }
-
-        if ($definition instanceof QuantityPriceDefinition) {
-            $definition->setQuantity($lineItem->getQuantity());
-
-            return $this->quantityPriceCalculator->calculate($definition, $context);
-        }
-
-        throw new MissingLineItemPriceException($lineItem->getId());
+        return $this->calculator->calculatePriceDefinition($definition, $prices, $context);
     }
 }
