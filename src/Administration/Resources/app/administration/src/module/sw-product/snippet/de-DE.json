@@ -140,6 +140,7 @@
       "cardTitlePriceRule": "Neue Preisregel",
       "placeholderRule": "Bitte wählen ...",
       "placeholderQuantityEnd": "unendlich ...",
+      "buttonListingPrice": "Streichpreis",
       "buttonPriceRuleDelete": "Preisregel löschen",
       "buttonPriceRuleDuplicate": "Preisregel duplizieren",
       "buttonPriceRuleCurrencyAdd": "Währung hinzufügen",
@@ -152,6 +153,7 @@
       "columnPrice": "Preis (brutto / netto)",
       "contextMenuDuplicate": "Duplizieren",
       "contextMenuDelete": "Löschen",
+      "titleListingPrice": "Streichpreis",
       "toolbarLabel": "Regeln"
     },
     "list": {

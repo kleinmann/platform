@@ -21,7 +21,7 @@
 
                     {% block sw_product_detail_prices_price_card_toolbar %}
                         <div class="sw-product-detail-context-prices__toolbar">
-                            <sw-container columns="1fr minmax(50px, max-content) minmax(50px, max-content)" gap="0 10px">
+                            <sw-container columns="1fr minmax(50px, max-content) minmax(50px, max-content) minmax(50px, max-content)" gap="0 10px">
 
                                 {% block sw_product_detail_prices_price_card_toolbar_rule_selection %}
                                     <sw-entity-single-select
@@ -49,6 +49,26 @@
                                             </li>
                                         </template>
                                     </sw-entity-single-select>
+                                {% endblock %}
+
+                                {% block sw_product_detail_prices_price_card_toolbar_listing_price %}
+                                <sw-button @click="onListPriceOpen(priceGroup.ruleId)"
+                                           size="small"
+                                           :disabled="priceGroup.ruleId === null || priceGroup.prices.length === 0">
+                                    {{ $tc('sw-product.prices.buttonListingPrice') }}
+                                </sw-button>
+                                {% endblock %}
+
+                                {% block sw_product_detail_prices_card_price_group_list_prices_modal %}
+                                <sw-maintain-currencies-modal v-if="displayListPrice[priceGroup.ruleId]"
+                                                              :title="$tc('sw-product.prices.titleListingPrice')"
+                                                              :currencies="currencies"
+                                                              :prices="getPricesForListPrice(priceGroup.prices)"
+                                                              :defaultPrice="getDefaultPrice(priceGroup.ruleId)"
+                                                              :taxRate="productTaxRate"
+                                                              :hidePrices="true"
+                                                              @modal-close="onListPriceClose(priceGroup.ruleId, $event)">
+                                </sw-maintain-currencies-modal>
                                 {% endblock %}
 
                                 {% block sw_product_detail_prices_price_card_toolbar_rule_delete %}

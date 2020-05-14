@@ -17,7 +17,8 @@ Component.register('sw-product-detail-context-prices', {
     data() {
         return {
             rules: [],
-            totalRules: 0
+            totalRules: 0,
+            displayListPrice: {}
         };
     },
 
@@ -361,13 +362,17 @@ Component.register('sw-product-detail-context-prices', {
             const highestEndValue = Math.max(...priceGroup.prices.map((price) => price.quantityEnd));
             newPriceRule.quantityStart = highestEndValue + 1;
 
-            newPriceRule.price = [{
+            const price = {
                 currencyId: this.defaultCurrency.id,
                 gross: this.defaultPrice.gross,
                 linked: this.defaultPrice.linked,
                 net: this.defaultPrice.net
-            }];
+            };
+            if (priceGroup.prices.first().price[0].listPrice) {
+                price.listPrice = priceGroup.prices.first().price[0].listPrice;
+            }
 
+            newPriceRule.price = [price];
             this.product.prices.add(newPriceRule);
         },
 
@@ -401,6 +406,42 @@ Component.register('sw-product-detail-context-prices', {
             return [
                 `context-price-group-${number}`
             ];
+        },
+
+        onListPriceOpen(ruleId) {
+            this.$set(this.displayListPrice, ruleId, true);
+        },
+
+        getDefaultPrice(ruleId) {
+            return this.findPricesByRuleId(ruleId).find((price) => price.price[0].currencyId === this.defaultCurrency.id)
+                .price[0];
+        },
+
+        getPricesForListPrice(prices) {
+            return prices.first().price;
+        },
+
+        onListPriceClose(ruleId, newPrices) {
+            const graduatedPrices = this.findPricesByRuleId(ruleId);
+
+            graduatedPrices.forEach((graduatedPrice) => {
+                graduatedPrice.price.forEach((price) => {
+                    const newPrice = newPrices.find((priceCandidate) => priceCandidate.currencyId === price.currencyId);
+                    if (newPrice.listPrice) {
+                        price.linked = newPrice.listPrice.linked;
+                        price.listPrice = {
+                            currencyId: newPrice.listPrice.currencyId,
+                            gross: newPrice.listPrice.gross,
+                            linked: newPrice.listPrice.linked,
+                            net: newPrice.listPrice.net
+                        };
+                    } else {
+                        delete price.listPrice;
+                    }
+                });
+            });
+
+            this.displayListPrice[ruleId] = false;
         }
     }
 });

@@ -139,6 +139,7 @@
       "cardTitlePriceRule": "New pricing rule",
       "placeholderRule": "Select...",
       "placeholderQuantityEnd": "Infinite...",
+      "buttonListingPrice": "List Price",
       "buttonPriceRuleDelete": "Delete pricing rule",
       "buttonPriceRuleDuplicate": "Duplicate pricing rule",
       "buttonPriceRuleCurrencyAdd": "Add currency",
@@ -151,6 +152,7 @@
       "columnPrice": "Price (gross / net)",
       "contextMenuDuplicate": "Duplicate",
       "contextMenuDelete": "Delete",
+      "titleListingPrice": "List Price",
       "toolbarLabel": "Rules"
     },
     "list": {
