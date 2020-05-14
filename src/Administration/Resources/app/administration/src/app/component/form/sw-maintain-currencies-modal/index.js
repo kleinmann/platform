@@ -7,6 +7,11 @@ Component.register('sw-maintain-currencies-modal', {
     template,
 
     props: {
+        title: {
+            type: String,
+            required: false
+        },
+
         currencies: {
             type: Array,
             required: true
@@ -75,6 +80,10 @@ Component.register('sw-maintain-currencies-modal', {
         createdComponent() {
             this.sortCurrencies();
             this.clonePrices = Shopware.Utils.object.cloneDeep(this.prices);
+
+            if (!this.title) {
+                this.title = this.$tc('sw-maintain-currencies-modal.title');
+            }
         },
 
         sortCurrencies() {
