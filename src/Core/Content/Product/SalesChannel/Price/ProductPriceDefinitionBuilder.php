@@ -52,7 +52,8 @@ class ProductPriceDefinitionBuilder implements ProductPriceDefinitionBuilderInte
                 $context->getContext()->getCurrencyPrecision(),
                 $quantity,
                 true,
-                $this->buildReferencePriceDefinition($product)
+                $this->buildReferencePriceDefinition($product),
+                $this->getCurrencyListPrice($price, $context)
             );
         }
 
@@ -86,12 +87,22 @@ class ProductPriceDefinitionBuilder implements ProductPriceDefinitionBuilderInte
             if ($listingPrice) {
                 // indexed listing prices are indexed for each currency
                 $from = $this->getPriceForTaxState($listingPrice->getFrom(), $context);
+                if ($listingPrice->getFrom()->getListPrice()) {
+                    $fromListPrice = $this->getPriceForTaxState($listingPrice->getFrom()->getListPrice(), $context);
+                } else {
+                    $fromListPrice = null;
+                }
 
                 $to = $this->getPriceForTaxState($listingPrice->getTo(), $context);
+                if ($listingPrice->getTo()->getListPrice()) {
+                    $toListPrice = $this->getPriceForTaxState($listingPrice->getTo()->getListPrice(), $context);
+                } else {
+                    $toListPrice = null;
+                }
 
                 return [
-                    'from' => new QuantityPriceDefinition($from, $taxRules, $currencyPrecision, 1, true, $this->buildReferencePriceDefinition($product)),
-                    'to' => new QuantityPriceDefinition($to, $taxRules, $currencyPrecision, 1, true, $this->buildReferencePriceDefinition($product)),
+                    'from' => new QuantityPriceDefinition($from, $taxRules, $currencyPrecision, 1, true, $this->buildReferencePriceDefinition($product), $fromListPrice),
+                    'to' => new QuantityPriceDefinition($to, $taxRules, $currencyPrecision, 1, true, $this->buildReferencePriceDefinition($product), $toListPrice),
                 ];
             }
         }
@@ -204,6 +215,23 @@ class ProductPriceDefinitionBuilder implements ProductPriceDefinitionBuilderInte
         $value = $this->getPriceForTaxState($price, $context);
 
         if ($price->getCurrencyId() === Defaults::CURRENCY) {
+            $value *= $context->getContext()->getCurrencyFactor();
+        }
+
+        return $value;
+    }
+
+    private function getCurrencyListPrice(PriceRuleEntity $rule, SalesChannelContext $context): ?float
+    {
+        $price = $rule->getPrice()->getCurrencyPrice($context->getCurrency()->getId());
+
+        if (!$price->getListPrice()) {
+            return null;
+        }
+
+        $value = $this->getPriceForTaxState($price->getListPrice(), $context);
+
+        if ($price->getListPrice()->getCurrencyId() === Defaults::CURRENCY) {
             $value *= $context->getContext()->getCurrencyFactor();
         }
 

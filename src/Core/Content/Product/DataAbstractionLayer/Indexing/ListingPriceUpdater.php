@@ -153,6 +153,23 @@ class ListingPriceUpdater
 
                 $currencyPrice['currencyId'] = $currencyId;
 
+                if (!empty($currencyPrice['listPrice'])) {
+                    $listPrice = $currencyPrice['listPrice'];
+
+                    $listPrice['gross'] = $this->priceRounding->round(
+                        $listPrice['gross'] * $currency['factor'],
+                        (int) $currency['decimal_precision']
+                    );
+
+                    $listPrice['net'] = $this->priceRounding->round(
+                        $listPrice['net'] * $currency['factor'],
+                        (int) $currency['decimal_precision']
+                    );
+
+                    $listPrice['currencyId'] = $currencyId;
+                    $currencyPrice['listPrice'] = $listPrice;
+                }
+
                 $price[$key] = $currencyPrice;
             }
 
@@ -200,7 +217,18 @@ class ListingPriceUpdater
                 $from = clone $this->priceStruct;
 
                 $to->assign($price['to']);
+                if (!empty($price['to']['listPrice'])) {
+                    $listPrice = clone $this->priceStruct;
+                    $listPrice->assign($price['to']['listPrice']);
+                    $to->assign(['listPrice' => $listPrice]);
+                }
+
                 $from->assign($price['from']);
+                if (!empty($price['from']['listPrice'])) {
+                    $listPrice = clone $this->priceStruct;
+                    $listPrice->assign($price['from']['listPrice']);
+                    $from->assign(['listPrice' => $listPrice]);
+                }
 
                 $price['to'] = $to;
                 $price['from'] = $from;

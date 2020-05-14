@@ -35,7 +35,7 @@
         {% endblock %}
 
         {% block component_product_box_price %}
-            {% set listPrice = product.calculatedPrice.listPrice %}
+            {% set listPrice = product.priceRange ? listingPrice.to.listPrice : product.calculatedPrice.listPrice %}
 
             <p class="product-price{% if listPrice.percentage > 0 %} with-list-price{% endif %}">
                 {% if product.priceRange and fromPrice.unitPrice != listingPrice.to.unitPrice %}
