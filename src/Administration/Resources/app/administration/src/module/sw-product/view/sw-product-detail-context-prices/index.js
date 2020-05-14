@@ -421,13 +421,25 @@ Component.register('sw-product-detail-context-prices', {
             return prices.first().price;
         },
 
+        getCurrency(currencyId) {
+            return this.currencies.find((currency) => currency.id === currencyId);
+        },
+
         onListPriceClose(ruleId, newPrices) {
+            const listPriceCurrencies = newPrices.map((price) => this.getCurrency(price.currencyId));
+            const productPrice = this.product.prices.find((productPriceCandidate) => productPriceCandidate.ruleId === ruleId);
+            listPriceCurrencies.forEach((currency) => {
+                if (this.isPriceFieldInherited(productPrice, currency)) {
+                    this.onInheritanceRemove(productPrice, currency);
+                }
+            });
+
             const graduatedPrices = this.findPricesByRuleId(ruleId);
 
             graduatedPrices.forEach((graduatedPrice) => {
                 graduatedPrice.price.forEach((price) => {
                     const newPrice = newPrices.find((priceCandidate) => priceCandidate.currencyId === price.currencyId);
-                    if (newPrice.listPrice) {
+                    if (newPrice && newPrice.listPrice) {
                         price.linked = newPrice.listPrice.linked;
                         price.listPrice = {
                             currencyId: newPrice.listPrice.currencyId,
@@ -441,7 +453,7 @@ Component.register('sw-product-detail-context-prices', {
                 });
             });
 
-            this.displayListPrice[ruleId] = false;
+            this.$set(this.displayListPrice, ruleId, false);
         }
     }
 });
