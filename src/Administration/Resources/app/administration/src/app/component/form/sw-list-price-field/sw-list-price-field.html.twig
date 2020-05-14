@@ -5,7 +5,8 @@
         }">
 
         {% block sw_list_price_field_price %}
-            <sw-price-field :price="price"
+            <sw-price-field v-if="!hidePrices"
+                            :price="price"
                             required
                             :compact="compact"
                             :disableSuffix="disableSuffix"

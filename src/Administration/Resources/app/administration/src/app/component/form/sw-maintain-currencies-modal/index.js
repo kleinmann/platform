@@ -27,6 +27,11 @@ Component.register('sw-maintain-currencies-modal', {
             required: true
         },
 
+        hidePrices: {
+            required: false,
+            default: false
+        },
+
         hideListPrices: {
             required: false,
             default: false
