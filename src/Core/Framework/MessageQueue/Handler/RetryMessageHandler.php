@@ -2,12 +2,12 @@
 
 namespace Shopware\Core\Framework\MessageQueue\Handler;
 
-use Psr\Log\LoggerInterface;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\MessageQueue\DeadMessage\DeadMessageEntity;
 use Shopware\Core\Framework\MessageQueue\Message\RetryMessage;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class RetryMessageHandler extends AbstractMessageHandler
 {
@@ -17,23 +17,16 @@ class RetryMessageHandler extends AbstractMessageHandler
     private $deadMessageRepository;
 
     /**
-     * @var iterable|AbstractMessageHandler[]
+     * @var MessageBusInterface
      */
-    private $handler;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private $messageBus;
 
     public function __construct(
         EntityRepositoryInterface $deadMessageRepository,
-        iterable $handler,
-        LoggerInterface $logger
+        MessageBusInterface $messageBus
     ) {
         $this->deadMessageRepository = $deadMessageRepository;
-        $this->handler = $handler;
-        $this->logger = $logger;
+        $this->messageBus = $messageBus;
     }
 
     /**
@@ -50,11 +43,7 @@ class RetryMessageHandler extends AbstractMessageHandler
             return;
         }
 
-        $handler = $this->findHandler($deadMessage->getHandlerClass());
-
-        if ($handler) {
-            $handler($deadMessage->getOriginalMessage());
-        }
+        $this->messageBus->dispatch($deadMessage->getOriginalMessage());
 
         $this->deadMessageRepository->delete([
             [
@@ -66,18 +55,5 @@ class RetryMessageHandler extends AbstractMessageHandler
     public static function getHandledMessages(): iterable
     {
         return [RetryMessage::class];
-    }
-
-    private function findHandler(string $handlerClass): ?AbstractMessageHandler
-    {
-        foreach ($this->handler as $handler) {
-            if (get_class($handler) === $handlerClass) {
-                return $handler;
-            }
-        }
-
-        $this->logger->warning(sprintf('MessageHandler for class "%s" not found.', $handlerClass));
-
-        return null;
     }
 }

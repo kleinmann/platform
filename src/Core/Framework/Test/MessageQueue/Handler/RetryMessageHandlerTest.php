@@ -66,22 +66,31 @@ class RetryMessageHandlerTest extends TestCase
         $message = new TestMessage();
         $deadMessageId = Uuid::randomHex();
 
-        $dummyHandler = new DummyHandler();
-
         $e = new \Exception('exception');
         $this->insertDeadMessage($deadMessageId, $message, $e);
 
+        $messageBus = $this->getContainer()->get('messenger.bus.shopware');
         $retryMessageHandler = new RetryMessageHandler(
             $this->deadMessageRepository,
-            [$dummyHandler],
-            $this->getContainer()->get('logger')
+            $messageBus
         );
         ($retryMessageHandler)(new RetryMessage($deadMessageId));
 
         $messages = $this->deadMessageRepository->search(new Criteria(), $this->context)->getEntities();
         static::assertCount(0, $messages);
 
-        static::assertEquals($message, $dummyHandler->getLastMessage());
+        $dispatchedMessages = array_map(
+            static function (array $busMessage) {
+                if ($busMessage['message'] instanceof TestMessage) {
+                    return $busMessage['message'];
+                }
+
+                return null;
+            },
+            $messageBus->getDispatchedMessages()
+        );
+
+        static::assertGreaterThan(0, count(array_filter($dispatchedMessages)));
     }
 
     public function testWithFailingRetry(): void
@@ -98,8 +107,7 @@ class RetryMessageHandlerTest extends TestCase
 
         $retryMessageHandler = new RetryMessageHandler(
             $this->deadMessageRepository,
-            [$dummyHandler],
-            $this->getContainer()->get('logger')
+            $this->getContainer()->get('messenger.bus.shopware')
         );
 
         try {
@@ -125,24 +133,6 @@ class RetryMessageHandlerTest extends TestCase
         $this->insertDeadMessage($deadMessageId, $message, $e, SitemapGenerateTaskHandler::class);
 
         ($this->retryMessageHandler)(new RetryMessage($deadMessageId));
-
-        $messages = $this->deadMessageRepository->search(new Criteria(), $this->context)->getEntities();
-        static::assertCount(0, $messages);
-    }
-
-    public function testWithOwnMessages(): void
-    {
-        $message = new SitemapMessage(null, null, null, null, true);
-        $deadMessageId = Uuid::randomHex();
-
-        $e = new \Exception('exception');
-        $this->insertDeadMessage($deadMessageId, $message, $e, SitemapGenerateTaskHandler::class);
-
-        $retryMessage = new RetryMessage($deadMessageId);
-        $retryMessageId = Uuid::randomHex();
-        $this->insertDeadMessage($retryMessageId, $retryMessage, $e, RetryMessageHandler::class);
-
-        ($this->retryMessageHandler)(new RetryMessage($retryMessageId));
 
         $messages = $this->deadMessageRepository->search(new Criteria(), $this->context)->getEntities();
         static::assertCount(0, $messages);

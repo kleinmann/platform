@@ -40,8 +40,7 @@
 
         <service id="Shopware\Core\Framework\MessageQueue\Handler\RetryMessageHandler">
             <argument type="service" id="dead_message.repository"/>
-            <argument type="tagged" tag="messenger.message_handler"/>
-            <argument type="service" id="logger"/>
+            <argument type="service" id="messenger.bus.shopware"/>
 
             <tag name="messenger.message_handler"/>
         </service>
