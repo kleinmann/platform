@@ -30,6 +30,7 @@ use Shopware\Core\Checkout\Promotion\Aggregate\PromotionDiscount\PromotionDiscou
 use Shopware\Core\Checkout\Promotion\Cart\Discount\Calculator\DiscountAbsoluteCalculator;
 use Shopware\Core\Checkout\Promotion\Cart\Discount\Calculator\DiscountFixedPriceCalculator;
 use Shopware\Core\Checkout\Promotion\Cart\Discount\Calculator\DiscountFixedUnitPriceCalculator;
+use Shopware\Core\Checkout\Promotion\Cart\Discount\Calculator\DiscountFixedUnitQuantityCalculator;
 use Shopware\Core\Checkout\Promotion\Cart\Discount\Calculator\DiscountPercentageCalculator;
 use Shopware\Core\Checkout\Promotion\Cart\Discount\Composition\DiscountCompositionBuilder;
 use Shopware\Core\Checkout\Promotion\Cart\Discount\DiscountCalculatorResult;
@@ -366,6 +367,11 @@ class PromotionCalculator
 
             case PromotionDiscountEntity::TYPE_FIXED_UNIT:
                 $calculator = new DiscountFixedUnitPriceCalculator($this->absolutePriceCalculator);
+
+                break;
+
+            case PromotionDiscountEntity::TYPE_FIXED_UNIT_QUANTITY:
+                $calculator = new DiscountFixedUnitQuantityCalculator($this->absolutePriceCalculator);
 
                 break;
 

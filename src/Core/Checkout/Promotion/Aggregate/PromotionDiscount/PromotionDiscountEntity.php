@@ -63,6 +63,12 @@ class PromotionDiscountEntity extends Entity
     public const TYPE_FIXED = 'fixed';
 
     /**
+     * This type defines a fixed item quantity
+     * definition of the discount.
+     */
+    public const TYPE_FIXED_UNIT_QUANTITY = 'fixed_unit_quantity';
+
+    /**
      * @var string
      */
     protected $promotionId;

@@ -108,6 +108,11 @@ class PromotionItemBuilder
 
                 break;
 
+            case PromotionDiscountEntity::TYPE_FIXED_UNIT_QUANTITY:
+                $promotionDefinition = new AbsolutePriceDefinition($discount->getValue(), 0, $targetFilter);
+
+                break;
+
             default:
                 $promotionDefinition = null;
         }
