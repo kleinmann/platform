@@ -32,19 +32,24 @@ export default class IndividualCodeGenerator extends EventEmitter {
      *
      * @param {String} pattern - The string with placeholders, like 'my-code-%d%s'
      * @param {Number} desiredCount - Maximum number of codes to generate
+     * @param {Number} generateCount - Actual number of codes to generate
+     * @param {Boolean} replaceExistingCodes - Switch to remove existing codes before generation
      */
-    async generateCodes(pattern, desiredCount) {
+    async generateCodes(pattern, desiredCount, generateCount, replaceExistingCodes) {
         const result = {
             count: 0
         };
 
         this.emit('generate-begin', {
-            maxCount: desiredCount
+            maxCount: desiredCount,
+            newCount: generateCount
         });
 
         // remove all existing codes
         // before generating new ones
-        await this.removeExistingCodes();
+        if (replaceExistingCodes) {
+            await this.removeExistingCodes();
+        }
 
         this.emit('generate-cleared', {});
 
@@ -52,7 +57,7 @@ export default class IndividualCodeGenerator extends EventEmitter {
         // this function will automatically chain itself by using "retries"
         // if the number of generated codes is not met after the first run.
         const promise = new Promise((onMainProcessCompleted) => {
-            this.startMainProcess(pattern, desiredCount, 0, 0, onMainProcessCompleted);
+            this.startMainProcess(pattern, generateCount, 0, 0, onMainProcessCompleted);
         });
 
         // start, resolve and grab our count of the generated codes.

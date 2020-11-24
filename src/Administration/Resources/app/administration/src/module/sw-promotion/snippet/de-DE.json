@@ -117,6 +117,7 @@
               "columnCustomer": "Kunde",
               "buttonDeleteCode": "Löschen",
               "buttonOpenCustomer": "Kunde öffnen",
+              "switchReplaceExistingCodes": "Bestehende Codes ersetzen",
               "alerts": {
                 "errorNoPatternTitle": "Fehlendes Muster",
                 "errorNoPatternMessage": "Bitte gib ein Muster für Deine Codes an.",

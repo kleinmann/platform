@@ -29,6 +29,10 @@
                 {{ $tc('sw-promotion.detail.main.general.codes.individual.buttonGenerate') }}
             </sw-button>
         {% endblock %}
+
+        {% block sw_promotion_individualcodes_generate_switch_replace_existing %}
+            <sw-checkbox-field :label="$tc('sw-promotion.detail.main.general.codes.individual.switchReplaceExistingCodes')" v-model="replaceExistingCodes"></sw-checkbox-field>
+        {% endblock %}
     </sw-container>
 
     <sw-container columns="5fr 1fr" gap="10px 10px" class="sw-promotion-individualcodes__progress-bar">

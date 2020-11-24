@@ -117,6 +117,7 @@
               "columnCustomer": "Customer",
               "buttonDeleteCode": "Delete",
               "buttonOpenCustomer": "Open customer",
+              "switchReplaceExistingCodes": "Replace existing codes",
               "alerts": {
                 "errorNoPatternTitle": "No code pattern",
                 "errorNoPatternMessage": "Please assign a code pattern.",

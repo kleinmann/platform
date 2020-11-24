@@ -43,6 +43,7 @@ Component.register('sw-promotion-individualcodes', {
             // local data
             codePattern: '',
             generateCount: 10,
+            replaceExistingCodes: false,
             totalCodesCount: 0,
             // GRID data
             gridCurrentPageNr: 1,
@@ -156,7 +157,15 @@ Component.register('sw-promotion-individualcodes', {
         onContinueGenerate() {
             // avoid that it might be triggered twice
             if (this.shouldStartGenerate) {
-                this.codeGenerator.generateCodes(this.promotion.individualCodePattern, this.generateCount);
+                let newCount = this.generateCount;
+
+                if (!this.replaceExistingCodes) {
+                    newCount = newCount - this.totalCodesCount;
+                }
+
+                if (newCount > 0) {
+                    this.codeGenerator.generateCodes(this.promotion.individualCodePattern, this.generateCount, newCount, this.replaceExistingCodes);
+                }
             }
 
             this.shouldStartGenerate = false;
@@ -172,7 +181,7 @@ Component.register('sw-promotion-individualcodes', {
             this.isGeneratingCodes = true;
 
             this.progressValue = 0;
-            this.progressMax = data.maxCount;
+            this.progressMax = data.newCount;
             this.generateCount = data.maxCount;
         },
 
